@@ -1,10 +1,12 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
 
 const Navbar = () => {
+  const location = useLocation();
+  
   return (
     <nav className="border-b py-4 px-6 bg-white/90 backdrop-blur-sm sticky top-0 z-50">
       <div className="container mx-auto flex items-center justify-between">
@@ -15,16 +17,28 @@ const Navbar = () => {
           <span className="text-2xl font-bold gradient-text">Moeflex</span>
         </Link>
         <div className="hidden md:flex gap-6">
-          <Link to="/" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/" 
+            className={`${location.pathname === '/' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
             Home
           </Link>
-          <Link to="/generator" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/generator" 
+            className={`${location.pathname === '/generator' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
             Strategy Generator
           </Link>
-          <Link to="#" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/marketplace" 
+            className={`${location.pathname === '/marketplace' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
             Marketplace
           </Link>
-          <Link to="#" className="text-muted-foreground hover:text-foreground transition-colors">
+          <Link 
+            to="/trends" 
+            className={`${location.pathname === '/trends' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
             Trends
           </Link>
         </div>
