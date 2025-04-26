@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { supabase } from "@/integrations/supabase/client";
 
 const platforms = ["Instagram", "LinkedIn", "TikTok", "Facebook", "Twitter", "YouTube"];
 const goals = ["Brand Awareness", "Lead Generation", "Sales", "Engagement", "Community Building", "Education"];
