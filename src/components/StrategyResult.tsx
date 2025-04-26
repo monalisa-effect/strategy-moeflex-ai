@@ -8,9 +8,10 @@ import { toast } from "sonner";
 
 interface StrategyResultProps {
   data: any; // In a real app, you'd define a proper type
+  aiGeneratedStrategy?: string; // Added the aiGeneratedStrategy prop as optional
 }
 
-const StrategyResult: React.FC<StrategyResultProps> = ({ data }) => {
+const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrategy }) => {
   const handleSave = () => {
     toast.success("Strategy saved successfully!");
   };
@@ -26,7 +27,7 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data }) => {
   // This would be real data from the API in a production app
   const mockData = {
     overview: {
-      summary: `Based on your input, we recommend a content-focused strategy for ${data?.businessName || "your business"} that emphasizes authentic storytelling on ${data?.platforms?.join(", ") || "selected platforms"}. Your target audience is looking for educational and inspirational content that addresses their specific needs.`,
+      summary: aiGeneratedStrategy || `Based on your input, we recommend a content-focused strategy for ${data?.businessName || "your business"} that emphasizes authentic storytelling on ${data?.platforms?.join(", ") || "selected platforms"}. Your target audience is looking for educational and inspirational content that addresses their specific needs.`,
       keyInsights: [
         "Your industry is growing at 12% annually with increasing competition",
         `${data?.goals?.includes("Brand Awareness") ? "Brand awareness should be prioritized through consistent posting and engagement" : "Focus on driving conversions through targeted content strategies"}`,
