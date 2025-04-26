@@ -1,11 +1,22 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Lightbulb } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  
+  const handleSignIn = () => {
+    navigate("/auth");
+  };
+  
+  const handleGetStarted = () => {
+    navigate("/generator");
+  };
   
   return (
     <nav className="border-b py-4 px-6 bg-white/90 backdrop-blur-sm sticky top-0 z-50">
@@ -43,10 +54,10 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="hidden md:inline-flex">
+          <Button variant="outline" className="hidden md:inline-flex" onClick={handleSignIn}>
             Sign In
           </Button>
-          <Button className="gradient-bg">Get Started</Button>
+          <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
         </div>
       </div>
     </nav>
