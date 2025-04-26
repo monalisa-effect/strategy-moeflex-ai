@@ -1,5 +1,4 @@
-
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const platforms = ["Instagram", "LinkedIn", "TikTok", "Facebook", "Twitter", "YouTube"];
 const goals = ["Brand Awareness", "Lead Generation", "Sales", "Engagement", "Community Building", "Education"];
@@ -27,6 +27,30 @@ const StrategyForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
+  const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
+
+  useEffect(() => {
+    const initializeGenAI = async () => {
+      try {
+        // Fetch the Gemini API key from Supabase secrets
+        const { data: { publicData } } = await supabase.functions.invoke('get-secret', {
+          body: JSON.stringify({ secretName: 'GEMINI_API_KEY' })
+        });
+
+        if (publicData?.secret) {
+          const generativeAI = new GoogleGenerativeAI(publicData.secret);
+          setGenAI(generativeAI);
+        } else {
+          toast.error("Gemini API key not found. Please check your Supabase secrets.");
+        }
+      } catch (error) {
+        console.error("Error initializing Gemini AI:", error);
+        toast.error("Failed to initialize AI strategy generator");
+      }
+    };
+
+    initializeGenAI();
+  }, []);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -51,18 +75,43 @@ const StrategyForm = () => {
     }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!genAI) {
+      toast.error("AI generator not initialized. Please check your API key.");
+      return;
+    }
+
     setLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
+    try {
+      const prompt = `Generate a social media strategy for a ${formData.industry} business named ${formData.businessName}. 
+      Brand tone: ${formData.brandTone}. 
+      Marketing goals: ${formData.goals.join(', ')}. 
+      Target audience: ${formData.audience}. 
+      Preferred platforms: ${formData.platforms.join(', ')}. 
+      Competitors: ${formData.competitors}. 
+      Budget range: ${formData.budget}`;
+
+      const model = genAI.getGenerativeModel({ model: "gemini-pro"});
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
       toast.success("Strategy generated successfully!");
+      navigate("/results", { 
+        state: { 
+          formData, 
+          aiGeneratedStrategy: text 
+        } 
+      });
+    } catch (error) {
+      console.error("Error generating strategy:", error);
+      toast.error("Failed to generate strategy. Please try again.");
+    } finally {
       setLoading(false);
-      
-      // In a real app, you'd pass the actual response data
-      navigate("/results", { state: { formData } });
-    }, 2000);
+    }
   };
 
   const handleNextStep = () => {
