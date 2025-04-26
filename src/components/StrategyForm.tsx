@@ -29,29 +29,37 @@ const StrategyForm = () => {
   });
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [genAI, setGenAI] = useState<GoogleGenerativeAI | null>(null);
+  const [apiKey, setApiKey] = useState<string | null>(null);
+  const [apiKeyError, setApiKeyError] = useState<string | null>(null);
 
   useEffect(() => {
-    const initializeGenAI = async () => {
+    const fetchApiKey = async () => {
       try {
-        // Fetch the Gemini API key from Supabase secrets
-        const { data: { publicData } } = await supabase.functions.invoke('get-secret', {
+        const { data, error } = await supabase.functions.invoke('get-secret', {
           body: JSON.stringify({ secretName: 'GEMINI_API_KEY' })
         });
 
-        if (publicData?.secret) {
-          const generativeAI = new GoogleGenerativeAI(publicData.secret);
-          setGenAI(generativeAI);
+        if (error) {
+          console.error("Error fetching Gemini API key:", error);
+          setApiKeyError("Failed to fetch API key");
+          toast.error("Error loading AI generator. Please try again later.");
+          return;
+        }
+
+        if (data?.publicData?.secret) {
+          setApiKey(data.publicData.secret);
         } else {
-          toast.error("Gemini API key not found. Please check your Supabase secrets.");
+          setApiKeyError("API key not found");
+          toast.error("AI generator configuration is incomplete. Please check your Supabase secrets.");
         }
       } catch (error) {
         console.error("Error initializing Gemini AI:", error);
+        setApiKeyError("Failed to initialize AI");
         toast.error("Failed to initialize AI strategy generator");
       }
     };
 
-    initializeGenAI();
+    fetchApiKey();
   }, []);
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -80,14 +88,15 @@ const StrategyForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!genAI) {
-      toast.error("AI generator not initialized. Please check your API key.");
+    if (!apiKey) {
+      toast.error("AI generator is not available. Please try again later.");
       return;
     }
 
     setLoading(true);
 
     try {
+      const genAI = new GoogleGenerativeAI(apiKey);
       const prompt = `Generate a social media strategy for a ${formData.industry} business named ${formData.businessName}. 
       Brand tone: ${formData.brandTone}. 
       Marketing goals: ${formData.goals.join(', ')}. 
@@ -291,7 +300,7 @@ const StrategyForm = () => {
         ) : (
           <Button 
             onClick={handleSubmit} 
-            disabled={loading || !formData.businessName || !formData.industry || formData.platforms.length === 0}
+            disabled={loading || !formData.businessName || !formData.industry || formData.platforms.length === 0 || apiKeyError !== null}
             className="gradient-bg"
           >
             {loading ? "Generating..." : "Generate Strategy"}

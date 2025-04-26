@@ -13,8 +13,31 @@ serve(async (req) => {
   }
   
   try {
-    // Parse the request body
-    const { secretName } = await req.json();
+    // Parse the request body and validate it has the required fields
+    let body;
+    try {
+      body = await req.json();
+    } catch (e) {
+      return new Response(
+        JSON.stringify({ error: 'Invalid JSON in request body' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    const { secretName } = body;
+    
+    if (!secretName) {
+      return new Response(
+        JSON.stringify({ error: 'Missing required field: secretName' }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
     
     // In a real-world scenario, implement proper authentication and security checks
     if (secretName === 'GEMINI_API_KEY') {
@@ -27,7 +50,7 @@ serve(async (req) => {
             status: 404,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
           }
-        )
+        );
       }
       
       return new Response(
@@ -39,7 +62,7 @@ serve(async (req) => {
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
         }
-      )
+      );
     }
 
     return new Response(
@@ -48,7 +71,7 @@ serve(async (req) => {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       }
-    )
+    );
   } catch (error) {
     console.error('Error processing request:', error);
     return new Response(
@@ -57,6 +80,6 @@ serve(async (req) => {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
-    )
+    );
   }
 })
