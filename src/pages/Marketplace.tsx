@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Plus, BriefcasePlus, UserPlus } from "lucide-react";
+import { Plus, Briefcase, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 // Mock data for talents
@@ -342,7 +343,7 @@ const Marketplace = () => {
             <TabsContent value="jobs" className="space-y-4">
               <div className="flex justify-end mb-4">
                 <Button onClick={() => setJobDialogOpen(true)} className="gradient-bg">
-                  <BriefcasePlus className="mr-2 h-4 w-4" /> Add Job
+                  <Briefcase className="mr-2 h-4 w-4" /> Add Job
                 </Button>
               </div>
 
