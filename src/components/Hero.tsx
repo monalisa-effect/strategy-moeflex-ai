@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, LayoutDashboard } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -23,6 +23,11 @@ const Hero = () => {
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link to="/trends">Learn More</Link>
+            </Button>
+            <Button asChild variant="outline" size="lg">
+              <Link to="/dashboard" className="flex items-center gap-2">
+                Dashboard <LayoutDashboard className="h-4 w-4" />
+              </Link>
             </Button>
           </div>
           <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">

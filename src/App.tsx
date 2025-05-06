@@ -8,6 +8,8 @@ import Index from "./pages/Index";
 import Generator from "./pages/Generator";
 import Results from "./pages/Results";
 import Marketplace from "./pages/Marketplace";
+import Dashboard from "./pages/Dashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import Trends from "./pages/Trends";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
@@ -25,6 +27,8 @@ const App = () => (
           <Route path="/generator" element={<Generator />} />
           <Route path="/results" element={<Results />} />
           <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/trends" element={<Trends />} />
           <Route path="/auth" element={<Auth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

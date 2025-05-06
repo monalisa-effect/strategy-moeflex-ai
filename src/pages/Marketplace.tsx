@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -13,8 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Plus, Briefcase, UserPlus } from "lucide-react";
+import { Briefcase, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { toast } from "@/components/ui/sonner";
+import { useNavigate } from "react-router-dom";
 
 // Mock data for talents
 const talents = [
@@ -118,6 +119,8 @@ const jobFormSchema = z.object({
 });
 
 const Marketplace = () => {
+  const navigate = useNavigate();
+  
   const [talents, setTalents] = useState([
     {
       id: 1,
@@ -282,10 +285,32 @@ const Marketplace = () => {
   };
   
   const handleContactTalent = (talent) => {
-    toast({
-      title: "Contact Request Sent",
-      description: `Your request to connect with ${talent.name} has been sent.`,
+    // Show toast notification
+    toast.success(`Contact request sent to ${talent.name}`, {
+      description: "They will receive your request and can respond via the messaging system."
     });
+    
+    // In a real app, this would save the connection request to a database
+    // For now, we'll simulate this with a setTimeout to show how it would work
+    setTimeout(() => {
+      console.log(`Connection request sent to talent: ${talent.id}`);
+      // This is where you would typically make an API call to store the connection
+    }, 500);
+    
+    // Close the talent profile dialog if it's open
+    if (talentProfileOpen) {
+      setTalentProfileOpen(false);
+    }
+  };
+
+  // Handler to navigate to user dashboard
+  const goToDashboard = () => {
+    navigate('/dashboard');
+  };
+
+  // Handler to navigate to admin dashboard
+  const goToAdminDashboard = () => {
+    navigate('/admin-dashboard');
   };
 
   return (
@@ -300,6 +325,14 @@ const Marketplace = () => {
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Connect with talented social media professionals or find exciting opportunities in the industry.
             </p>
+            <div className="flex justify-center gap-4 mt-6">
+              <Button variant="outline" onClick={goToDashboard}>
+                My Dashboard
+              </Button>
+              <Button variant="outline" onClick={goToAdminDashboard}>
+                Admin Dashboard
+              </Button>
+            </div>
           </div>
 
           <Tabs defaultValue="talent" className="w-full">
@@ -698,10 +731,7 @@ const Marketplace = () => {
               
               <DialogFooter>
                 <Button 
-                  onClick={() => {
-                    handleContactTalent(selectedTalent);
-                    setTalentProfileOpen(false);
-                  }}
+                  onClick={() => handleContactTalent(selectedTalent)}
                   className="w-full gradient-bg"
                 >
                   Contact {selectedTalent.name}
