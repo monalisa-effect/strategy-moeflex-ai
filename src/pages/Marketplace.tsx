@@ -1,11 +1,19 @@
-
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { Plus, BriefcasePlus, UserPlus } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 // Mock data for talents
 const talents = [
@@ -88,7 +96,182 @@ const jobs = [
   },
 ];
 
+// Form validation schemas
+const talentFormSchema = z.object({
+  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
+  role: z.string().min(2, { message: "Role must be at least 2 characters." }),
+  rate: z.string().min(1, { message: "Rate is required." }),
+  experience: z.string().min(1, { message: "Experience is required." }),
+  bio: z.string().min(10, { message: "Bio must be at least 10 characters." }),
+  specialties: z.string().min(2, { message: "At least one specialty is required." })
+});
+
+const jobFormSchema = z.object({
+  title: z.string().min(5, { message: "Title must be at least 5 characters." }),
+  company: z.string().min(2, { message: "Company name is required." }),
+  budget: z.string().min(1, { message: "Budget is required." }),
+  location: z.string().min(1, { message: "Location is required." }),
+  type: z.string().min(1, { message: "Job type is required." }),
+  platforms: z.string().min(2, { message: "At least one platform is required." }),
+  description: z.string().min(10, { message: "Description must be at least 10 characters." })
+});
+
 const Marketplace = () => {
+  const [talents, setTalents] = useState([
+    {
+      id: 1,
+      name: "Sarah Johnson",
+      role: "Social Media Manager",
+      avatar: "/placeholder.svg",
+      specialties: ["Instagram", "TikTok", "Content Creation"],
+      rate: "$45/hr",
+      experience: "5 years",
+      bio: "Specializing in viral content strategies for lifestyle and fashion brands with proven track record of increasing engagement by 300%.",
+    },
+    {
+      id: 2,
+      name: "Michael Chen",
+      role: "Graphic Designer",
+      avatar: "/placeholder.svg",
+      specialties: ["Social Graphics", "Branding", "Motion Design"],
+      rate: "$55/hr",
+      experience: "7 years",
+      bio: "Award-winning designer creating scroll-stopping visuals for top DTC brands and scaling startups.",
+    },
+    {
+      id: 3,
+      name: "Ava Williams",
+      role: "Content Writer",
+      avatar: "/placeholder.svg",
+      specialties: ["Copywriting", "Brand Voice", "SEO"],
+      rate: "$40/hr",
+      experience: "4 years",
+      bio: "Former journalist turned copywriter with expertise in crafting compelling stories that convert for B2B SaaS companies.",
+    },
+    {
+      id: 4,
+      name: "James Rodriguez",
+      role: "Video Editor",
+      avatar: "/placeholder.svg",
+      specialties: ["Short-form Video", "YouTube", "Motion Graphics"],
+      rate: "$60/hr",
+      experience: "6 years",
+      bio: "Specializing in creating viral short-form content for TikTok and Instagram Reels with over 50M+ views for clients.",
+    },
+  ]);
+  
+  const [jobs, setJobs] = useState([
+    {
+      id: 1,
+      title: "Social Media Manager Needed for Fashion Brand",
+      company: "StyleHouse",
+      budget: "$2,000-$3,500/month",
+      location: "Remote",
+      type: "Contract",
+      platforms: ["Instagram", "TikTok", "Pinterest"],
+      description: "Looking for an experienced social media manager to handle our fashion brand's presence across multiple platforms.",
+      posted: "2 days ago",
+    },
+    {
+      id: 2,
+      title: "Content Creator for SaaS Company",
+      company: "CloudTech Solutions",
+      budget: "$50-$70/hour",
+      location: "Remote",
+      type: "Part-time",
+      platforms: ["LinkedIn", "Twitter", "Blog"],
+      description: "Seeking a B2B content creator to develop thought leadership content for our SaaS platform.",
+      posted: "5 days ago",
+    },
+    {
+      id: 3,
+      title: "Video Editor for YouTube Channel",
+      company: "FitLife",
+      budget: "$35-$50/hour",
+      location: "Remote",
+      type: "Project-based",
+      platforms: ["YouTube"],
+      description: "Need a skilled video editor for our fitness YouTube channel with 500K subscribers.",
+      posted: "1 week ago",
+    },
+  ]);
+
+  const [talentDialogOpen, setTalentDialogOpen] = useState(false);
+  const [jobDialogOpen, setJobDialogOpen] = useState(false);
+  const { toast } = useToast();
+
+  // Initialize forms
+  const talentForm = useForm({
+    resolver: zodResolver(talentFormSchema),
+    defaultValues: {
+      name: "",
+      role: "",
+      rate: "",
+      experience: "",
+      bio: "",
+      specialties: ""
+    }
+  });
+
+  const jobForm = useForm({
+    resolver: zodResolver(jobFormSchema),
+    defaultValues: {
+      title: "",
+      company: "",
+      budget: "",
+      location: "",
+      type: "",
+      platforms: "",
+      description: ""
+    }
+  });
+
+  // Form submission handlers
+  const onSubmitTalent = (values) => {
+    const newTalent = {
+      id: talents.length + 1,
+      name: values.name,
+      role: values.role,
+      avatar: "/placeholder.svg",
+      specialties: values.specialties.split(",").map(s => s.trim()),
+      rate: values.rate,
+      experience: values.experience,
+      bio: values.bio
+    };
+    
+    setTalents([...talents, newTalent]);
+    setTalentDialogOpen(false);
+    talentForm.reset();
+    
+    toast({
+      title: "Success",
+      description: "New talent profile created",
+    });
+  };
+
+  const onSubmitJob = (values) => {
+    const newJob = {
+      id: jobs.length + 1,
+      title: values.title,
+      company: values.company,
+      budget: values.budget,
+      location: values.location,
+      type: values.type,
+      platforms: values.platforms.split(",").map(p => p.trim()),
+      description: values.description,
+      posted: "Just now"
+    };
+    
+    setJobs([...jobs, newJob]);
+    setJobDialogOpen(false);
+    jobForm.reset();
+    
+    toast({
+      title: "Success",
+      description: "New job listing created",
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -110,6 +293,12 @@ const Marketplace = () => {
             </TabsList>
 
             <TabsContent value="talent" className="space-y-4">
+              <div className="flex justify-end mb-4">
+                <Button onClick={() => setTalentDialogOpen(true)} className="gradient-bg">
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Talent
+                </Button>
+              </div>
+
               <div className="grid md:grid-cols-2 gap-6">
                 {talents.map((talent) => (
                   <Card key={talent.id} className="overflow-hidden">
@@ -151,6 +340,12 @@ const Marketplace = () => {
             </TabsContent>
 
             <TabsContent value="jobs" className="space-y-4">
+              <div className="flex justify-end mb-4">
+                <Button onClick={() => setJobDialogOpen(true)} className="gradient-bg">
+                  <BriefcasePlus className="mr-2 h-4 w-4" /> Add Job
+                </Button>
+              </div>
+
               <div className="grid gap-6">
                 {jobs.map((job) => (
                   <Card key={job.id}>
@@ -190,6 +385,242 @@ const Marketplace = () => {
           </Tabs>
         </div>
       </div>
+
+      {/* Add Talent Dialog */}
+      <Dialog open={talentDialogOpen} onOpenChange={setTalentDialogOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>Add New Talent Profile</DialogTitle>
+            <DialogDescription>
+              Create a new talent profile to showcase on the marketplace.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...talentForm}>
+            <form onSubmit={talentForm.handleSubmit(onSubmitTalent)} className="space-y-4">
+              <FormField
+                control={talentForm.control}
+                name="name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="John Doe" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={talentForm.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Professional Role</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Social Media Manager" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={talentForm.control}
+                  name="rate"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Hourly Rate</FormLabel>
+                      <FormControl>
+                        <Input placeholder="$45/hr" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={talentForm.control}
+                  name="experience"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Years of Experience</FormLabel>
+                      <FormControl>
+                        <Input placeholder="5 years" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={talentForm.control}
+                name="specialties"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Specialties</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Instagram, TikTok, Content Creation (comma separated)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={talentForm.control}
+                name="bio"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Professional Bio</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Write a compelling bio highlighting your expertise and experience..." 
+                        className="min-h-[100px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setTalentDialogOpen(false)}>Cancel</Button>
+                <Button type="submit" className="gradient-bg">Create Profile</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Add Job Dialog */}
+      <Dialog open={jobDialogOpen} onOpenChange={setJobDialogOpen}>
+        <DialogContent className="sm:max-w-[550px]">
+          <DialogHeader>
+            <DialogTitle>Post a New Job</DialogTitle>
+            <DialogDescription>
+              Create a new job listing to find the perfect talent for your project.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <Form {...jobForm}>
+            <form onSubmit={jobForm.handleSubmit(onSubmitJob)} className="space-y-4">
+              <FormField
+                control={jobForm.control}
+                name="title"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Title</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Social Media Manager for Fashion Brand" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={jobForm.control}
+                name="company"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Company Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Your Company" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <div className="grid grid-cols-2 gap-4">
+                <FormField
+                  control={jobForm.control}
+                  name="budget"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Budget</FormLabel>
+                      <FormControl>
+                        <Input placeholder="$2,000-$3,500/month" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={jobForm.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Location</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Remote" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              
+              <FormField
+                control={jobForm.control}
+                name="type"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Type</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Full-time, Contract, etc." {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={jobForm.control}
+                name="platforms"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Platforms</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Instagram, TikTok, Pinterest (comma separated)" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <FormField
+                control={jobForm.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Job Description</FormLabel>
+                    <FormControl>
+                      <Textarea 
+                        placeholder="Describe the job requirements, responsibilities, and qualifications..." 
+                        className="min-h-[100px]" 
+                        {...field} 
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              
+              <DialogFooter>
+                <Button type="button" variant="outline" onClick={() => setJobDialogOpen(false)}>Cancel</Button>
+                <Button type="submit" className="gradient-bg">Post Job</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
