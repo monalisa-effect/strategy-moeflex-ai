@@ -22,7 +22,7 @@ const Hero = () => {
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">
-              <Link to="#">Learn More</Link>
+              <Link to="/trends">Learn More</Link>
             </Button>
           </div>
           <div className="pt-10 grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto">
