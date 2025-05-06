@@ -249,9 +249,9 @@ const Marketplace = () => {
     setTalentDialogOpen(false);
     talentForm.reset();
     
-    toast({
-      title: "Success",
-      description: "New talent profile created",
+    // Fix: Use the correct toast format
+    toast("New talent profile created", {
+      description: "Your talent profile has been added to the marketplace."
     });
   };
 
@@ -272,9 +272,9 @@ const Marketplace = () => {
     setJobDialogOpen(false);
     jobForm.reset();
     
-    toast({
-      title: "Success",
-      description: "New job listing created",
+    // Fix: Use the correct toast format
+    toast("New job listing created", {
+      description: "Your job has been posted to the marketplace."
     });
   };
 
@@ -286,7 +286,7 @@ const Marketplace = () => {
   
   const handleContactTalent = (talent) => {
     // Show toast notification using sonner toast
-    toast.success(`Contact request sent to ${talent.name}`, {
+    toast(`Contact request sent to ${talent.name}`, {
       description: "They will receive your request and can respond via the messaging system."
     });
     
