@@ -1,21 +1,74 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Lightbulb } from "lucide-react";
+import { Lightbulb, LogOut, UserRound } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    // Set up auth state listener
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+        setLoading(false);
+      }
+    );
+
+    // Check for existing session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
   
   const handleSignIn = () => {
     navigate("/auth");
   };
   
+  const handleSignOut = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast("Signed out successfully");
+      navigate("/");
+    } catch (error) {
+      toast("Error signing out", {
+        description: error.message,
+      });
+    }
+  };
+  
   const handleGetStarted = () => {
     navigate("/generator");
+  };
+
+  // Get initials for avatar fallback
+  const getUserInitials = () => {
+    if (!user) return "?";
+    
+    const email = user.email || "";
+    if (email) {
+      return email.substring(0, 2).toUpperCase();
+    }
+    
+    return "U";
   };
   
   return (
@@ -54,9 +107,46 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          <Button variant="outline" className="hidden md:inline-flex" onClick={handleSignIn}>
-            Sign In
-          </Button>
+          {loading ? (
+            <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
+          ) : user ? (
+            <div className="flex items-center gap-3">
+              <Link
+                to="/dashboard"
+                className={`${location.pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors hidden md:block`}
+              >
+                Dashboard
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
+                    <Avatar>
+                      <AvatarImage src={user.user_metadata?.avatar_url} alt={user.email} />
+                      <AvatarFallback>{getUserInitials()}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link to="/dashboard" className="cursor-pointer w-full">
+                      <UserRound className="mr-2 h-4 w-4" />
+                      <span>Dashboard</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={handleSignOut}>
+                    <LogOut className="mr-2 h-4 w-4" />
+                    <span>Sign Out</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : (
+            <Button variant="outline" className="hidden md:inline-flex" onClick={handleSignIn}>
+              Sign In
+            </Button>
+          )}
           <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
         </div>
       </div>
