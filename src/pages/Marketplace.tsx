@@ -204,7 +204,7 @@ const Marketplace = () => {
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
   const [selectedTalent, setSelectedTalent] = useState(null);
   const [talentProfileOpen, setTalentProfileOpen] = useState(false);
-  const { toast } = useToast();
+  const { toast: hookToast } = useToast();
 
   // Initialize forms
   const talentForm = useForm({
@@ -285,7 +285,7 @@ const Marketplace = () => {
   };
   
   const handleContactTalent = (talent) => {
-    // Show toast notification
+    // Show toast notification using sonner toast
     toast.success(`Contact request sent to ${talent.name}`, {
       description: "They will receive your request and can respond via the messaging system."
     });
