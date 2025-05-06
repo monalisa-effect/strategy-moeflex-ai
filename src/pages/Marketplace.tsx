@@ -199,6 +199,8 @@ const Marketplace = () => {
 
   const [talentDialogOpen, setTalentDialogOpen] = useState(false);
   const [jobDialogOpen, setJobDialogOpen] = useState(false);
+  const [selectedTalent, setSelectedTalent] = useState(null);
+  const [talentProfileOpen, setTalentProfileOpen] = useState(false);
   const { toast } = useToast();
 
   // Initialize forms
@@ -273,6 +275,19 @@ const Marketplace = () => {
     });
   };
 
+  // Handler functions for talent profile actions
+  const handleViewProfile = (talent) => {
+    setSelectedTalent(talent);
+    setTalentProfileOpen(true);
+  };
+  
+  const handleContactTalent = (talent) => {
+    toast({
+      title: "Contact Request Sent",
+      description: `Your request to connect with ${talent.name} has been sent.`,
+    });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
@@ -332,8 +347,20 @@ const Marketplace = () => {
                       </div>
                     </CardContent>
                     <CardFooter className="border-t bg-slate-50 flex justify-between">
-                      <Button variant="outline" size="sm">View Profile</Button>
-                      <Button className="gradient-bg" size="sm">Contact</Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleViewProfile(talent)}
+                      >
+                        View Profile
+                      </Button>
+                      <Button 
+                        className="gradient-bg" 
+                        size="sm"
+                        onClick={() => handleContactTalent(talent)}
+                      >
+                        Contact
+                      </Button>
                     </CardFooter>
                   </Card>
                 ))}
@@ -620,6 +647,68 @@ const Marketplace = () => {
               </DialogFooter>
             </form>
           </Form>
+        </DialogContent>
+      </Dialog>
+
+      {/* Talent Profile Dialog */}
+      <Dialog open={talentProfileOpen} onOpenChange={setTalentProfileOpen}>
+        <DialogContent className="sm:max-w-[600px]">
+          {selectedTalent && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-4">
+                  <Avatar className="h-16 w-16">
+                    <AvatarImage src={selectedTalent.avatar} alt={selectedTalent.name} />
+                    <AvatarFallback>{selectedTalent.name.substring(0, 2)}</AvatarFallback>
+                  </Avatar>
+                  <div>
+                    <DialogTitle className="text-xl">{selectedTalent.name}</DialogTitle>
+                    <DialogDescription className="text-base mt-1">{selectedTalent.role}</DialogDescription>
+                  </div>
+                </div>
+              </DialogHeader>
+              
+              <div className="space-y-4 my-4">
+                <div className="flex justify-between">
+                  <span className="font-semibold">Rate:</span>
+                  <span>{selectedTalent.rate}</span>
+                </div>
+                
+                <div className="flex justify-between">
+                  <span className="font-semibold">Experience:</span>
+                  <span>{selectedTalent.experience}</span>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Bio:</p>
+                  <p>{selectedTalent.bio}</p>
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="font-semibold">Specialties:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedTalent.specialties.map((specialty, index) => (
+                      <Badge key={index} variant="outline" className="bg-slate-100">
+                        {specialty}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              </div>
+              
+              <DialogFooter>
+                <Button 
+                  onClick={() => {
+                    handleContactTalent(selectedTalent);
+                    setTalentProfileOpen(false);
+                  }}
+                  className="w-full gradient-bg"
+                >
+                  Contact {selectedTalent.name}
+                </Button>
+              </DialogFooter>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
