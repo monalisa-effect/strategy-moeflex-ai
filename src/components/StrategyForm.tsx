@@ -89,6 +89,7 @@ const StrategyForm = () => {
     e.preventDefault();
     
     if (!apiKey) {
+      console.log("Gotten Here in the if block")
       toast.error("AI generator is not available. Please try again later.");
       return;
     }
@@ -96,7 +97,11 @@ const StrategyForm = () => {
     setLoading(true);
 
     try {
+      console.log("Gotten Here at the top of try block")
+
+      // const theApiKey = apiKey ? apikey: proccess.env.GEMINI_API_KEY
       const genAI = new GoogleGenerativeAI(apiKey);
+      console.log("Gotten Here 1")
       const prompt = `Generate a social media strategy for a ${formData.industry} business named ${formData.businessName}. 
       Brand tone: ${formData.brandTone}. 
       Marketing goals: ${formData.goals.join(', ')}. 
@@ -104,12 +109,17 @@ const StrategyForm = () => {
       Preferred platforms: ${formData.platforms.join(', ')}. 
       Competitors: ${formData.competitors}. 
       Budget range: ${formData.budget}`;
+      console.log("Gotten Here 2")
 
       const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-      const result = await model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      console.log("Gotten Here 3")
 
+      const result = await model.generateContent(prompt);
+      console.log("Gotten Here 4")
+      const response = await result.response;
+      console.log("Gotten Here 5")
+      const text = response.text();
+      console.log("Gotten Here 6")
       toast.success("Strategy generated successfully!");
       navigate("/results", { 
         state: { 
