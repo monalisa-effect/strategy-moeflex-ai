@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -22,6 +21,51 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
 
   const handleDownload = () => {
     toast.success("Preparing PDF download...");
+  };
+
+  // Format the AI generated strategy for better readability
+  const formatAIStrategy = (strategy: string) => {
+    if (!strategy) return null;
+    
+    // Split by double line breaks to create paragraphs
+    const paragraphs = strategy.split('\n\n').filter(p => p.trim());
+    
+    return paragraphs.map((paragraph, index) => {
+      // Check if it's a heading (starts with #, **, or is in ALL CAPS)
+      const isHeading = paragraph.match(/^#+\s/) || paragraph.match(/^\*\*.*\*\*$/) || 
+                       (paragraph.length < 100 && paragraph === paragraph.toUpperCase() && paragraph.includes(' '));
+      
+      if (isHeading) {
+        return (
+          <h4 key={index} className="font-semibold text-lg mt-4 mb-2 text-primary">
+            {paragraph.replace(/^#+\s|\*\*/g, '').trim()}
+          </h4>
+        );
+      }
+      
+      // Check if it's a list item
+      const isListItem = paragraph.match(/^[\d\-\*•]/);
+      
+      if (isListItem) {
+        const listItems = paragraph.split('\n').filter(item => item.trim());
+        return (
+          <ul key={index} className="list-disc pl-5 space-y-1 mb-4">
+            {listItems.map((item, itemIndex) => (
+              <li key={itemIndex} className="text-muted-foreground">
+                {item.replace(/^[\d\-\*•]\s*/, '').trim()}
+              </li>
+            ))}
+          </ul>
+        );
+      }
+      
+      // Regular paragraph
+      return (
+        <p key={index} className="text-muted-foreground mb-3 leading-relaxed">
+          {paragraph.trim()}
+        </p>
+      );
+    });
   };
 
   // This would be real data from the API in a production app
@@ -116,8 +160,14 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
             </CardHeader>
             <CardContent className="space-y-6">
               <div>
-                <h3 className="font-semibold text-lg mb-2">Summary</h3>
-                <p className="text-muted-foreground">{mockData.overview.summary}</p>
+                <h3 className="font-semibold text-lg mb-4">Summary</h3>
+                <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-primary">
+                  {aiGeneratedStrategy ? formatAIStrategy(aiGeneratedStrategy) : (
+                    <p className="text-muted-foreground leading-relaxed">
+                      {mockData.overview.summary}
+                    </p>
+                  )}
+                </div>
               </div>
               <div>
                 <h3 className="font-semibold text-lg mb-2">Key Insights</h3>
