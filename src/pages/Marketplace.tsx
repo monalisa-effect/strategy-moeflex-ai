@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,8 @@ import { Briefcase, UserPlus } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "@/components/ui/sonner";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 // Mock data for talents
 const talents = [
@@ -120,6 +122,15 @@ const jobFormSchema = z.object({
 
 const Marketplace = () => {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const { profile } = useUserProfile(user);
+  
+  // Get current user on component mount
+  React.useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, []);
   
   const [talents, setTalents] = useState([
     {
@@ -205,6 +216,9 @@ const Marketplace = () => {
   const [selectedTalent, setSelectedTalent] = useState(null);
   const [talentProfileOpen, setTalentProfileOpen] = useState(false);
   const { toast: hookToast } = useToast();
+
+  // Check if current user is admin
+  const isAdmin = profile?.role === 'admin';
 
   // Initialize forms
   const talentForm = useForm({
@@ -329,9 +343,11 @@ const Marketplace = () => {
               <Button variant="outline" onClick={goToDashboard}>
                 My Dashboard
               </Button>
-              <Button variant="outline" onClick={goToAdminDashboard}>
-                Admin Dashboard
-              </Button>
+              {isAdmin && (
+                <Button variant="outline" onClick={goToAdminDashboard}>
+                  Admin Dashboard
+                </Button>
+              )}
             </div>
           </div>
 
