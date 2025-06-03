@@ -89,7 +89,7 @@ const StrategyForm = () => {
     e.preventDefault();
     
     if (!apiKey) {
-      console.log("Gotten Here in the if block")
+      console.log("API key not available");
       toast.error("AI generator is not available. Please try again later.");
       return;
     }
@@ -97,29 +97,41 @@ const StrategyForm = () => {
     setLoading(true);
 
     try {
-      console.log("Gotten Here at the top of try block")
+      console.log("Starting strategy generation");
 
-      // const theApiKey = apiKey ? apikey: proccess.env.GEMINI_API_KEY
       const genAI = new GoogleGenerativeAI(apiKey);
-      console.log("Gotten Here 1")
-      const prompt = `Generate a social media strategy for a ${formData.industry} business named ${formData.businessName}. 
+      console.log("GoogleGenerativeAI initialized");
+      
+      const prompt = `Generate a comprehensive social media strategy for a ${formData.industry} business named ${formData.businessName}. 
       Brand tone: ${formData.brandTone}. 
       Marketing goals: ${formData.goals.join(', ')}. 
       Target audience: ${formData.audience}. 
       Preferred platforms: ${formData.platforms.join(', ')}. 
       Competitors: ${formData.competitors}. 
-      Budget range: ${formData.budget}`;
-      console.log("Gotten Here 2")
+      Budget range: ${formData.budget}
 
-      const model = genAI.getGenerativeModel({ model: "gemini-pro"});
-      console.log("Gotten Here 3")
+      Please provide a detailed strategy including:
+      1. Content strategy recommendations
+      2. Posting frequency and timing
+      3. Engagement tactics
+      4. Platform-specific best practices
+      5. Measurable goals and KPIs`;
+      
+      console.log("Prompt created");
+
+      // Use the updated model name
+      const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash"});
+      console.log("Model initialized with gemini-1.5-flash");
 
       const result = await model.generateContent(prompt);
-      console.log("Gotten Here 4")
+      console.log("Content generated");
+      
       const response = await result.response;
-      console.log("Gotten Here 5")
+      console.log("Response received");
+      
       const text = response.text();
-      console.log("Gotten Here 6")
+      console.log("Text extracted");
+      
       toast.success("Strategy generated successfully!");
       navigate("/results", { 
         state: { 
