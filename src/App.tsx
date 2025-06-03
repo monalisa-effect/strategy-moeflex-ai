@@ -13,6 +13,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import Trends from "./pages/Trends";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
+import AdminAuth from "./pages/AdminAuth";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
           <Route path="/admin-dashboard" element={<AdminDashboard />} />
           <Route path="/trends" element={<Trends />} />
           <Route path="/auth" element={<Auth />} />
+          <Route path="/admin-auth" element={<AdminAuth />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

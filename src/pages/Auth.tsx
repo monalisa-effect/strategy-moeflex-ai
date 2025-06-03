@@ -28,9 +28,29 @@ const Auth = () => {
       
       if (error) {
         toast.error(error.message);
-      } else {
-        toast.success("Signed in successfully!");
-        navigate("/");
+        return;
+      }
+
+      if (data.user) {
+        // Check user role and redirect accordingly
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .maybeSingle();
+
+        if (profileError) {
+          toast.error("Error checking user profile");
+          return;
+        }
+
+        if (profile?.role === 'admin') {
+          toast.success("Redirecting to admin dashboard...");
+          navigate("/admin-dashboard");
+        } else {
+          toast.success("Signed in successfully!");
+          navigate("/dashboard");
+        }
       }
     } catch (error) {
       console.error("Sign in error:", error);

@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Lightbulb, LogOut, UserRound } from "lucide-react";
+import { Lightbulb, LogOut, UserRound, Shield } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -14,12 +14,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { profile, loading: profileLoading } = useUserProfile(user);
   
   useEffect(() => {
     // Set up auth state listener
@@ -70,6 +72,8 @@ const Navbar = () => {
     
     return "U";
   };
+
+  const isAdmin = profile?.role === 'admin';
   
   return (
     <nav className="border-b py-4 px-6 bg-white/90 backdrop-blur-sm sticky top-0 z-50">
@@ -107,16 +111,26 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex items-center gap-3">
-          {loading ? (
+          {loading || profileLoading ? (
             <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
           ) : user ? (
             <div className="flex items-center gap-3">
-              <Link
-                to="/dashboard"
-                className={`${location.pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors hidden md:block`}
-              >
-                Dashboard
-              </Link>
+              {!isAdmin && (
+                <Link
+                  to="/dashboard"
+                  className={`${location.pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors hidden md:block`}
+                >
+                  Dashboard
+                </Link>
+              )}
+              {isAdmin && (
+                <Link
+                  to="/admin-dashboard"
+                  className={`${location.pathname === '/admin-dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors hidden md:block`}
+                >
+                  Admin
+                </Link>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="p-0 h-8 w-8 rounded-full">
@@ -127,14 +141,26 @@ const Navbar = () => {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuLabel>{user.email}</DropdownMenuLabel>
+                  <DropdownMenuLabel className="flex items-center gap-2">
+                    {user.email}
+                    {isAdmin && <Shield className="h-3 w-3 text-red-500" />}
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem asChild>
-                    <Link to="/dashboard" className="cursor-pointer w-full">
-                      <UserRound className="mr-2 h-4 w-4" />
-                      <span>Dashboard</span>
-                    </Link>
-                  </DropdownMenuItem>
+                  {isAdmin ? (
+                    <DropdownMenuItem asChild>
+                      <Link to="/admin-dashboard" className="cursor-pointer w-full">
+                        <Shield className="mr-2 h-4 w-4" />
+                        <span>Admin Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  ) : (
+                    <DropdownMenuItem asChild>
+                      <Link to="/dashboard" className="cursor-pointer w-full">
+                        <UserRound className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Sign Out</span>
@@ -143,9 +169,15 @@ const Navbar = () => {
               </DropdownMenu>
             </div>
           ) : (
-            <Button variant="outline" className="hidden md:inline-flex" onClick={handleSignIn}>
-              Sign In
-            </Button>
+            <>
+              <Button variant="outline" className="hidden md:inline-flex" onClick={handleSignIn}>
+                Sign In
+              </Button>
+              <Button variant="ghost" className="hidden md:inline-flex" onClick={() => navigate('/admin-auth')}>
+                <Shield className="mr-2 h-4 w-4" />
+                Admin
+              </Button>
+            </>
           )}
           <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
         </div>
