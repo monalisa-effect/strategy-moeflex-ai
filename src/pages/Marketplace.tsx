@@ -12,7 +12,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Briefcase, UserPlus } from "lucide-react";
+import { Briefcase, UserPlus, ArrowRightLeft, MessageCircle } from "lucide-react";
+import { SkillSwapProfile } from "@/components/SkillSwap/SkillSwapProfile";
+import { SkillSwapBoard } from "@/components/SkillSwap/SkillSwapBoard";
+import { SkillSwapMessages } from "@/components/SkillSwap/SkillSwapMessages";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "@/components/ui/sonner";
 import { useNavigate } from "react-router-dom";
@@ -351,10 +354,11 @@ const Marketplace = () => {
             </div>
           </div>
 
-          <Tabs defaultValue="talent" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-8">
+          <Tabs defaultValue="skillswap" className="w-full">
+            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
               <TabsTrigger value="talent">Find Talent</TabsTrigger>
-              <TabsTrigger value="jobs">Find Jobs</TabsTrigger>
+              <TabsTrigger value="skillswap">SkillSwap</TabsTrigger>
+              <TabsTrigger value="messages">Messages</TabsTrigger>
             </TabsList>
 
             <TabsContent value="talent" className="space-y-4">
@@ -458,6 +462,15 @@ const Marketplace = () => {
                   </Card>
                 ))}
               </div>
+            </TabsContent>
+
+            <TabsContent value="skillswap" className="space-y-6">
+              <SkillSwapProfile user={user} />
+              <SkillSwapBoard user={user} />
+            </TabsContent>
+
+            <TabsContent value="messages" className="space-y-4">
+              <SkillSwapMessages user={user} />
             </TabsContent>
           </Tabs>
         </div>
