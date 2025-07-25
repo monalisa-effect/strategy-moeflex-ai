@@ -2,8 +2,9 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Share, Save, Calendar } from "lucide-react";
+import { Download, Share, Save, Calendar, TrendingUp, Target, Users, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
 
 interface StrategyResultProps {
   data: any; // In a real app, you'd define a proper type
@@ -12,15 +13,73 @@ interface StrategyResultProps {
 
 const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrategy }) => {
   const handleSave = () => {
-    toast.success("Strategy saved successfully!");
+    try {
+      const strategyData = {
+        data,
+        aiGeneratedStrategy,
+        timestamp: new Date().toISOString(),
+        mockData
+      };
+      localStorage.setItem('savedStrategy', JSON.stringify(strategyData));
+      toast.success("Strategy saved to your browser!");
+    } catch (error) {
+      toast.error("Failed to save strategy");
+    }
   };
 
-  const handleShare = () => {
-    toast.success("Sharing options opened!");
+  const handleShare = async () => {
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: `Social Media Strategy for ${data?.businessName || 'Your Business'}`,
+          text: 'Check out my custom social media strategy!',
+          url: window.location.href
+        });
+        toast.success("Strategy shared successfully!");
+      } else {
+        // Fallback: copy URL to clipboard
+        await navigator.clipboard.writeText(window.location.href);
+        toast.success("Strategy link copied to clipboard!");
+      }
+    } catch (error) {
+      toast.error("Failed to share strategy");
+    }
   };
 
   const handleDownload = () => {
-    toast.success("Preparing PDF download...");
+    try {
+      const strategyContent = `
+Social Media Strategy Report
+Generated on: ${new Date().toLocaleDateString()}
+Business: ${data?.businessName || 'Your Business'}
+
+STRATEGY OVERVIEW:
+${aiGeneratedStrategy || mockData.overview.summary}
+
+CONTENT PILLARS:
+${mockData.contentStrategy.pillars.map((pillar, i) => `${i + 1}. ${pillar}`).join('\n')}
+
+CONTENT IDEAS:
+${mockData.contentStrategy.contentIdeas.map((idea, i) => `${i + 1}. ${idea}`).join('\n')}
+
+RECOMMENDED HASHTAGS:
+${mockData.hashtags.join(' ')}
+      `.trim();
+
+      const blob = new Blob([strategyContent], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `social-media-strategy-${data?.businessName?.replace(/\s+/g, '-') || 'strategy'}.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      toast.success("Strategy downloaded successfully!");
+    } catch (error) {
+      toast.error("Failed to download strategy");
+    }
   };
 
   // Format the AI generated strategy for better readability
@@ -152,31 +211,96 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
           <TabsTrigger value="hashtags">Hashtags</TabsTrigger>
         </TabsList>
         
-        <TabsContent value="overview">
+        <TabsContent value="overview" className="space-y-6">
+          {/* Strategy Summary Card */}
+          <Card className="bg-gradient-to-br from-primary/5 to-primary/10 border-primary/20">
+            <CardHeader>
+              <div className="flex items-center gap-2">
+                <Target className="h-5 w-5 text-primary" />
+                <CardTitle className="gradient-text">Strategy Overview</CardTitle>
+              </div>
+              <CardDescription>Your personalized social media strategy roadmap</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg border border-primary/20 shadow-sm">
+                {aiGeneratedStrategy ? formatAIStrategy(aiGeneratedStrategy) : (
+                  <p className="text-muted-foreground leading-relaxed text-lg">
+                    {mockData.overview.summary}
+                  </p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Key Insights Grid */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {mockData.overview.keyInsights.map((insight, i) => (
+              <Card key={i} className="hover:shadow-md transition-all duration-300 hover:scale-105 cursor-pointer">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="bg-primary/10 p-2 rounded-full mt-1">
+                      {i === 0 && <TrendingUp className="h-4 w-4 text-primary" />}
+                      {i === 1 && <Target className="h-4 w-4 text-primary" />}
+                      {i === 2 && <Users className="h-4 w-4 text-primary" />}
+                      {i === 3 && <Lightbulb className="h-4 w-4 text-primary" />}
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="font-semibold mb-1">
+                        {i === 0 && "Market Growth"}
+                        {i === 1 && "Strategy Focus"}
+                        {i === 2 && "Content Performance"}
+                        {i === 3 && "Posting Frequency"}
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed">{insight}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Business Info Summary */}
           <Card>
             <CardHeader>
-              <CardTitle>Strategy Overview</CardTitle>
-              <CardDescription>A high-level summary of your social media strategy</CardDescription>
+              <CardTitle className="text-lg">Strategy Details</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div>
-                <h3 className="font-semibold text-lg mb-4">Summary</h3>
-                <div className="bg-slate-50 p-4 rounded-lg border-l-4 border-primary">
-                  {aiGeneratedStrategy ? formatAIStrategy(aiGeneratedStrategy) : (
-                    <p className="text-muted-foreground leading-relaxed">
-                      {mockData.overview.summary}
-                    </p>
-                  )}
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{data?.businessName || "Your Business"}</div>
+                  <div className="text-sm text-muted-foreground">Business Name</div>
+                </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{data?.platforms?.length || 0}</div>
+                  <div className="text-sm text-muted-foreground">Platforms</div>
+                </div>
+                <div className="text-center p-4 bg-muted/50 rounded-lg">
+                  <div className="text-2xl font-bold text-primary">{data?.goals?.length || 0}</div>
+                  <div className="text-sm text-muted-foreground">Goals</div>
                 </div>
               </div>
-              <div>
-                <h3 className="font-semibold text-lg mb-2">Key Insights</h3>
-                <ul className="list-disc pl-5 space-y-2">
-                  {mockData.overview.keyInsights.map((insight, i) => (
-                    <li key={i}>{insight}</li>
-                  ))}
-                </ul>
-              </div>
+              
+              {data?.platforms && (
+                <div className="mt-4">
+                  <h4 className="font-semibold mb-2">Selected Platforms:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {data.platforms.map((platform: string, i: number) => (
+                      <Badge key={i} variant="secondary">{platform}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
+              {data?.goals && (
+                <div className="mt-4">
+                  <h4 className="font-semibold mb-2">Primary Goals:</h4>
+                  <div className="flex flex-wrap gap-2">
+                    {data.goals.map((goal: string, i: number) => (
+                      <Badge key={i} variant="outline">{goal}</Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
