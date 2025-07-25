@@ -288,9 +288,24 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
                 <CardDescription>Customized recommendations based on your business details</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="bg-muted/50 p-6 rounded-lg">
-                  {formatAIStrategy(aiGeneratedStrategy)}
-                </div>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead className="w-1/4">Strategy Component</TableHead>
+                      <TableHead>Recommendations</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    <TableRow>
+                      <TableCell className="font-semibold align-top">AI Strategy Analysis</TableCell>
+                      <TableCell>
+                        <div className="bg-muted/50 p-4 rounded-lg">
+                          {formatAIStrategy(aiGeneratedStrategy)}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </CardContent>
             </Card>
           )}
