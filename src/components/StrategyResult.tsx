@@ -2,9 +2,12 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Share, Save, Calendar, TrendingUp, Target, Users, Lightbulb } from "lucide-react";
+import { Download, Share, Calendar, TrendingUp, Target, Users, Lightbulb } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
 interface StrategyResultProps {
   data: any; // In a real app, you'd define a proper type
@@ -12,20 +15,6 @@ interface StrategyResultProps {
 }
 
 const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrategy }) => {
-  const handleSave = () => {
-    try {
-      const strategyData = {
-        data,
-        aiGeneratedStrategy,
-        timestamp: new Date().toISOString(),
-        mockData
-      };
-      localStorage.setItem('savedStrategy', JSON.stringify(strategyData));
-      toast.success("Strategy saved to your browser!");
-    } catch (error) {
-      toast.error("Failed to save strategy");
-    }
-  };
 
   const handleShare = async () => {
     try {
@@ -46,39 +35,38 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
     }
   };
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
     try {
-      const strategyContent = `
-Social Media Strategy Report
-Generated on: ${new Date().toLocaleDateString()}
-Business: ${data?.businessName || 'Your Business'}
+      const element = document.getElementById('strategy-content');
+      if (!element) {
+        toast.error("Content not found for PDF generation");
+        return;
+      }
 
-STRATEGY OVERVIEW:
-${aiGeneratedStrategy || mockData.overview.summary}
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff'
+      });
 
-CONTENT PILLARS:
-${mockData.contentStrategy.pillars.map((pillar, i) => `${i + 1}. ${pillar}`).join('\n')}
-
-CONTENT IDEAS:
-${mockData.contentStrategy.contentIdeas.map((idea, i) => `${i + 1}. ${idea}`).join('\n')}
-
-RECOMMENDED HASHTAGS:
-${mockData.hashtags.join(' ')}
-      `.trim();
-
-      const blob = new Blob([strategyContent], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `social-media-strategy-${data?.businessName?.replace(/\s+/g, '-') || 'strategy'}.txt`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
       
-      toast.success("Strategy downloaded successfully!");
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = pdf.internal.pageSize.getHeight();
+      const imgWidth = canvas.width;
+      const imgHeight = canvas.height;
+      const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
+      const imgX = (pdfWidth - imgWidth * ratio) / 2;
+      const imgY = 30;
+
+      pdf.addImage(imgData, 'PNG', imgX, imgY, imgWidth * ratio, imgHeight * ratio);
+      pdf.save(`social-media-strategy-${data?.businessName?.replace(/\s+/g, '-') || 'strategy'}.pdf`);
+      
+      toast.success("PDF downloaded successfully!");
     } catch (error) {
-      toast.error("Failed to download strategy");
+      console.error('PDF generation error:', error);
+      toast.error("Failed to generate PDF");
     }
   };
 
@@ -182,7 +170,7 @@ ${mockData.hashtags.join(' ')}
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full" id="strategy-content">
       <div className="flex justify-between items-center mb-6 flex-col sm:flex-row gap-4">
         <div>
           <h1 className="text-3xl font-bold">Your Custom Strategy</h1>
@@ -191,9 +179,6 @@ ${mockData.hashtags.join(' ')}
           </p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline" onClick={handleSave} className="flex gap-2">
-            <Save className="h-4 w-4" /> Save
-          </Button>
           <Button variant="outline" onClick={handleShare} className="flex gap-2">
             <Share className="h-4 w-4" /> Share
           </Button>
@@ -222,15 +207,93 @@ ${mockData.hashtags.join(' ')}
               <CardDescription>Your personalized social media strategy roadmap</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-lg border border-primary/20 shadow-sm">
-                {aiGeneratedStrategy ? formatAIStrategy(aiGeneratedStrategy) : (
-                  <p className="text-muted-foreground leading-relaxed text-lg">
-                    {mockData.overview.summary}
-                  </p>
-                )}
-              </div>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead className="w-1/4">Category</TableHead>
+                    <TableHead>Details</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  <TableRow>
+                    <TableCell className="font-semibold">Business Name</TableCell>
+                    <TableCell>{data?.businessName || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Industry</TableCell>
+                    <TableCell>{data?.industry || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Business Description</TableCell>
+                    <TableCell>{data?.businessDescription || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Unique Selling Point</TableCell>
+                    <TableCell>{data?.uniqueSellingPoint || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Brand Values</TableCell>
+                    <TableCell>{data?.brandValues || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Brand Personality</TableCell>
+                    <TableCell>{data?.brandPersonality || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Target Audience</TableCell>
+                    <TableCell>{data?.audience || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Marketing Goals</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {data?.goals?.map((goal: string, i: number) => (
+                          <Badge key={i} variant="secondary">{goal}</Badge>
+                        )) || "N/A"}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Platforms</TableCell>
+                    <TableCell>
+                      <div className="flex flex-wrap gap-1">
+                        {data?.platforms?.map((platform: string, i: number) => (
+                          <Badge key={i} variant="outline">{platform}</Badge>
+                        )) || "N/A"}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Budget Range</TableCell>
+                    <TableCell>{data?.budget || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Current Challenges</TableCell>
+                    <TableCell>{data?.currentChallenges || "N/A"}</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell className="font-semibold">Competitors</TableCell>
+                    <TableCell>{data?.competitors || "N/A"}</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
+
+          {/* AI Generated Strategy */}
+          {aiGeneratedStrategy && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="gradient-text">AI-Generated Strategy</CardTitle>
+                <CardDescription>Customized recommendations based on your business details</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="bg-muted/50 p-6 rounded-lg">
+                  {formatAIStrategy(aiGeneratedStrategy)}
+                </div>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Key Insights Grid */}
           <div className="grid gap-4 md:grid-cols-2">

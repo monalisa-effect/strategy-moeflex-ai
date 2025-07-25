@@ -26,6 +26,11 @@ const StrategyForm = () => {
     platforms: [],
     competitors: "",
     budget: "",
+    businessDescription: "",
+    uniqueSellingPoint: "",
+    brandValues: "",
+    currentChallenges: "",
+    brandPersonality: "",
   });
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
@@ -103,11 +108,19 @@ const StrategyForm = () => {
       console.log("GoogleGenerativeAI initialized");
       
       const prompt = `Generate a comprehensive social media strategy for a ${formData.industry} business named ${formData.businessName}. 
-      Brand tone: ${formData.brandTone}. 
-      Marketing goals: ${formData.goals.join(', ')}. 
-      Target audience: ${formData.audience}. 
-      Preferred platforms: ${formData.platforms.join(', ')}. 
-      Competitors: ${formData.competitors}. 
+
+      BUSINESS CONTEXT:
+      Business Description: ${formData.businessDescription}
+      Unique Selling Point: ${formData.uniqueSellingPoint}
+      Brand Values & Mission: ${formData.brandValues}
+      Brand Personality: ${formData.brandPersonality}
+      Current Challenges: ${formData.currentChallenges}
+      
+      STRATEGY DETAILS:
+      Marketing goals: ${formData.goals.join(', ')}
+      Target audience: ${formData.audience}
+      Preferred platforms: ${formData.platforms.join(', ')}
+      Competitors: ${formData.competitors}
       Budget range: ${formData.budget}
 
       Please provide a detailed strategy including:
@@ -115,7 +128,9 @@ const StrategyForm = () => {
       2. Posting frequency and timing
       3. Engagement tactics
       4. Platform-specific best practices
-      5. Measurable goals and KPIs`;
+      5. Measurable goals and KPIs
+      6. Content calendar suggestions
+      7. Brand positioning recommendations`;
       
       console.log("Prompt created");
 
@@ -212,14 +227,35 @@ const StrategyForm = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="brandTone">Brand Tone & Personality</Label>
+                <Label htmlFor="businessDescription">Business Description</Label>
                 <Textarea 
-                  id="brandTone"
-                  name="brandTone"
-                  value={formData.brandTone}
+                  id="businessDescription"
+                  name="businessDescription"
+                  value={formData.businessDescription}
                   onChange={handleTextChange}
-                  placeholder="Describe your brand's voice and personality (e.g., professional but friendly, quirky and fun, etc.)"
+                  placeholder="Describe what your business does, your products/services, and your mission"
                   required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="uniqueSellingPoint">Unique Selling Point (USP)</Label>
+                <Textarea 
+                  id="uniqueSellingPoint"
+                  name="uniqueSellingPoint"
+                  value={formData.uniqueSellingPoint}
+                  onChange={handleTextChange}
+                  placeholder="What makes your business different from competitors? What's your unique value proposition?"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brandValues">Brand Values & Mission</Label>
+                <Textarea 
+                  id="brandValues"
+                  name="brandValues"
+                  value={formData.brandValues}
+                  onChange={handleTextChange}
+                  placeholder="What values does your brand stand for? What's your company mission?"
                 />
               </div>
             </div>
@@ -252,6 +288,27 @@ const StrategyForm = () => {
                   onChange={handleTextChange}
                   placeholder="Describe your target audience (age, location, interests, pain points, etc.)"
                   required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="brandPersonality">Brand Tone & Personality</Label>
+                <Textarea 
+                  id="brandPersonality"
+                  name="brandPersonality"
+                  value={formData.brandPersonality}
+                  onChange={handleTextChange}
+                  placeholder="Describe your brand's voice and personality (e.g., professional but friendly, quirky and fun, etc.)"
+                  required
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="currentChallenges">Current Marketing Challenges</Label>
+                <Textarea 
+                  id="currentChallenges"
+                  name="currentChallenges"
+                  value={formData.currentChallenges}
+                  onChange={handleTextChange}
+                  placeholder="What marketing challenges are you currently facing? What results are you hoping to achieve?"
                 />
               </div>
             </div>
@@ -322,7 +379,7 @@ const StrategyForm = () => {
         ) : (
           <Button 
             onClick={handleSubmit} 
-            disabled={loading || !formData.businessName || !formData.industry || formData.platforms.length === 0 || apiKeyError !== null}
+            disabled={loading || !formData.businessName || !formData.industry || !formData.businessDescription || !formData.uniqueSellingPoint || formData.platforms.length === 0 || apiKeyError !== null}
             className="gradient-bg"
           >
             {loading ? "Generating..." : "Generate Strategy"}
