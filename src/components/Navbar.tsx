@@ -109,6 +109,18 @@ const Navbar = () => {
           >
             Trends
           </Link>
+          <Link 
+            to="/about" 
+            className={`${location.pathname === '/about' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
+            About
+          </Link>
+          <Link 
+            to="/help" 
+            className={`${location.pathname === '/help' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+          >
+            Help
+          </Link>
         </div>
         <div className="flex items-center gap-3">
           {loading || profileLoading ? (

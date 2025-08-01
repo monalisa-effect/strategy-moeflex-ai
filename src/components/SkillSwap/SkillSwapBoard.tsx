@@ -565,18 +565,22 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>I'm offering *</FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Select skill" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {userOfferingSkills.map((userSkill) => (
-                            <SelectItem key={userSkill.skills.id} value={userSkill.skills.id}>
-                              {userSkill.skills.name}
-                            </SelectItem>
-                          ))}
+                          {userOfferingSkills.length > 0 ? (
+                            userOfferingSkills.map((userSkill) => (
+                              <SelectItem key={userSkill.skills.id} value={userSkill.skills.id}>
+                                {userSkill.skills.name}
+                              </SelectItem>
+                            ))
+                          ) : (
+                            <SelectItem value="" disabled>No offering skills found</SelectItem>
+                          )}
                         </SelectContent>
                       </Select>
                       <FormMessage />

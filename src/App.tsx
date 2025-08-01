@@ -14,6 +14,8 @@ import Trends from "./pages/Trends";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import AdminAuth from "./pages/AdminAuth";
+import About from "./pages/About";
+import Help from "./pages/Help";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +35,8 @@ const App = () => (
           <Route path="/trends" element={<Trends />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/admin-auth" element={<AdminAuth />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/help" element={<Help />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
