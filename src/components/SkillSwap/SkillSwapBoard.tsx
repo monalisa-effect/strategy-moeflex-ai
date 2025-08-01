@@ -244,7 +244,16 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
   };
 
   const onSubmitOffer = async (values: z.infer<typeof offerSchema>) => {
-    if (!user || !selectedListing) return;
+    if (!user || !selectedListing) {
+      toast({
+        title: "Error",
+        description: "Please log in and select a listing to make an offer.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    console.log("Submitting offer with values:", values);
 
     const { error } = await supabase
       .from("swap_offers")
@@ -293,10 +302,10 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
   const userNeedingSkills = userSkills.filter(skill => skill.type === "needing");
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div className="relative flex-1 max-w-md">
+        <div className="relative flex-1 max-w-md w-full sm:w-auto">
           <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search listings..."
@@ -308,12 +317,13 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
         
         <Dialog open={listingDialogOpen} onOpenChange={setListingDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gradient-bg">
+            <Button className="gradient-bg w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" />
-              Create Swap Listing
+              <span className="hidden sm:inline">Create Swap Listing</span>
+              <span className="sm:hidden">Create Listing</span>
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-md">
+          <DialogContent className="max-w-md mx-4 sm:mx-auto">
             <DialogHeader>
               <DialogTitle>Create a Swap Listing</DialogTitle>
             </DialogHeader>
@@ -351,7 +361,7 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
                   )}
                 />
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={listingForm.control}
                     name="offering_skill_id"
@@ -403,7 +413,7 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <FormField
                     control={listingForm.control}
                     name="estimated_hours"
@@ -452,28 +462,28 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
       </div>
 
       {/* Listings Grid */}
-      <div className="grid gap-6">
+      <div className="grid gap-4 sm:gap-6">
         {filteredListings.length > 0 ? (
           filteredListings.map((listing) => (
             <Card key={listing.id} className="overflow-hidden">
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center space-x-3">
-                    <Avatar className="h-10 w-10">
+                <div className="flex flex-col sm:flex-row items-start justify-between gap-3 sm:gap-0">
+                  <div className="flex items-center space-x-3 flex-1">
+                    <Avatar className="h-10 w-10 flex-shrink-0">
                       <AvatarImage src={listing.user_profiles?.avatar_url} />
                       <AvatarFallback>
                         {listing.user_profiles?.name?.substring(0, 2).toUpperCase() || "?"}
                       </AvatarFallback>
                     </Avatar>
-                    <div>
-                      <CardTitle className="text-lg">{listing.title}</CardTitle>
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-base sm:text-lg truncate">{listing.title}</CardTitle>
                       <CardDescription className="flex items-center gap-1">
-                        <User className="h-3 w-3" />
-                        {listing.user_profiles?.name || "Anonymous"}
+                        <User className="h-3 w-3 flex-shrink-0" />
+                        <span className="truncate">{listing.user_profiles?.name || "Anonymous"}</span>
                       </CardDescription>
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-left sm:text-right w-full sm:w-auto">
                     <div className="flex items-center gap-1 text-sm text-muted-foreground">
                       <Clock className="h-3 w-3" />
                       {listing.estimated_hours}h • {listing.delivery_time}
@@ -483,17 +493,17 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
               </CardHeader>
               
               <CardContent className="pt-0">
-                <p className="text-sm text-muted-foreground mb-4">{listing.description}</p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">{listing.description}</p>
                 
-                <div className="flex items-center justify-center space-x-4 p-4 bg-slate-50 rounded-lg">
+                <div className="flex flex-col sm:flex-row items-center justify-center space-y-2 sm:space-y-0 sm:space-x-4 p-3 sm:p-4 bg-slate-50 rounded-lg">
                   <div className="text-center">
-                    <Badge className="bg-green-100 text-green-800 border-green-200">
+                    <Badge className="bg-green-100 text-green-800 border-green-200 text-xs sm:text-sm">
                       Offering: {listing.offering_skill.name}
                     </Badge>
                   </div>
-                  <ArrowRightLeft className="h-4 w-4 text-muted-foreground" />
+                  <ArrowRightLeft className="h-4 w-4 text-muted-foreground hidden sm:block" />
                   <div className="text-center">
-                    <Badge className="bg-blue-100 text-blue-800 border-blue-200">
+                    <Badge className="bg-blue-100 text-blue-800 border-blue-200 text-xs sm:text-sm">
                       Needs: {listing.needing_skill.name}
                     </Badge>
                   </div>
@@ -534,7 +544,7 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
 
       {/* Offer Dialog */}
       <Dialog open={offerDialogOpen} onOpenChange={setOfferDialogOpen}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md mx-4 sm:mx-auto max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Propose a Swap</DialogTitle>
           </DialogHeader>
@@ -548,7 +558,7 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
           )}
           <Form {...offerForm}>
             <form onSubmit={offerForm.handleSubmit(onSubmitOffer)} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={offerForm.control}
                   name="offering_skill_id"
@@ -600,7 +610,7 @@ export const SkillSwapBoard: React.FC<SkillSwapBoardProps> = ({ user }) => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <FormField
                   control={offerForm.control}
                   name="proposed_hours"

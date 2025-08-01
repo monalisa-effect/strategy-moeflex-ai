@@ -205,7 +205,7 @@ const StrategyForm = () => {
           {step === 1 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-2">
-                <Label htmlFor="businessName">Business Name</Label>
+                <Label htmlFor="businessName">Business Name <span className="text-destructive">*</span></Label>
                 <Input 
                   id="businessName"
                   name="businessName"
@@ -216,7 +216,7 @@ const StrategyForm = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="industry">Industry/Niche</Label>
+                <Label htmlFor="industry">Industry/Niche <span className="text-destructive">*</span></Label>
                 <Input 
                   id="industry"
                   name="industry"
@@ -227,7 +227,7 @@ const StrategyForm = () => {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="businessDescription">Business Description</Label>
+                <Label htmlFor="businessDescription">Business Description <span className="text-destructive">*</span></Label>
                 <Textarea 
                   id="businessDescription"
                   name="businessDescription"
@@ -264,7 +264,7 @@ const StrategyForm = () => {
           {step === 2 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-2">
-                <Label>Marketing Goals (Select all that apply)</Label>
+                <Label>Marketing Goals <span className="text-destructive">*</span> (Select all that apply)</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
                   {goals.map((goal) => (
                     <Button
@@ -280,7 +280,7 @@ const StrategyForm = () => {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label htmlFor="audience">Target Audience Demographics</Label>
+                <Label htmlFor="audience">Target Audience Demographics <span className="text-destructive">*</span></Label>
                 <Textarea 
                   id="audience"
                   name="audience"
@@ -317,7 +317,7 @@ const StrategyForm = () => {
           {step === 3 && (
             <div className="space-y-6 animate-fade-in">
               <div className="space-y-2">
-                <Label>Preferred Platforms (Select all that apply)</Label>
+                <Label>Preferred Platforms <span className="text-destructive">*</span> (Select all that apply)</Label>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2 pt-2">
                   {platforms.map((platform) => (
                     <Button
