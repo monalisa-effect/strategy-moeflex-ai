@@ -3,6 +3,8 @@ import React from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
+import SkillSwapShowcase from "@/components/SkillSwapShowcase";
+import SwapCalculator from "@/components/SwapCalculator";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -13,6 +15,8 @@ const Index = () => {
       <Navbar />
       <Hero />
       <Features />
+      <SkillSwapShowcase />
+      <SwapCalculator />
       
       <div className="py-20 px-6 bg-white text-center">
         <div className="container mx-auto max-w-4xl">
@@ -48,10 +52,10 @@ const Index = () => {
               <div>
                 <h3 className="font-semibold mb-4">Product</h3>
                 <ul className="space-y-2">
-                  <li><a href="#" className="text-slate-300 hover:text-white">Strategy Generator</a></li>
-                  <li><a href="#" className="text-slate-300 hover:text-white">Talent Marketplace</a></li>
-                  <li><a href="#" className="text-slate-300 hover:text-white">Trend Hub</a></li>
-                  <li><a href="#" className="text-slate-300 hover:text-white">Smart Brief Builder</a></li>
+                  <li><Link to="/generator" className="text-slate-300 hover:text-white">Strategy Generator</Link></li>
+                  <li><Link to="/marketplace" className="text-slate-300 hover:text-white">SkillSwap</Link></li>
+                  <li><Link to="/trends" className="text-slate-300 hover:text-white">Trend Hub</Link></li>
+                  <li><a href="#" className="text-slate-300 hover:text-white">Swap Calculator</a></li>
                 </ul>
               </div>
               <div>

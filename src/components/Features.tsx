@@ -16,8 +16,8 @@ const features = [
     icon: Lightbulb,
   },
   {
-    title: "Talent Marketplace",
-    description: "Connect with social media experts, content creators, and designers—or offer your services and get hired.",
+    title: "SkillSwap Exchange",
+    description: "Exchange skills with other professionals—trade your expertise for services you need without spending money.",
     icon: Users,
   },
   {
@@ -31,8 +31,8 @@ const features = [
     icon: FileText,
   },
   {
-    title: "Save & Share Tools",
-    description: "Save strategies, export as PDFs, or collaborate with teams and clients directly in the app.",
+    title: "Swap Calculator",
+    description: "Calculate fair skill exchanges with our built-in calculator that estimates service values and ensures balanced trades.",
     icon: Save,
   },
 ];

@@ -101,7 +101,7 @@ const Navbar = () => {
             to="/marketplace" 
             className={`${location.pathname === '/marketplace' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
-            Marketplace
+            SkillSwap
           </Link>
           <Link 
             to="/trends" 
