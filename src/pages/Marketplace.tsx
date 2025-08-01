@@ -16,6 +16,7 @@ import { Briefcase, UserPlus, ArrowRightLeft, MessageCircle } from "lucide-react
 import { SkillSwapProfile } from "@/components/SkillSwap/SkillSwapProfile";
 import { SkillSwapBoard } from "@/components/SkillSwap/SkillSwapBoard";
 import { SkillSwapMessages } from "@/components/SkillSwap/SkillSwapMessages";
+import SwapCalculator from "@/components/SwapCalculator";
 import { useToast } from "@/hooks/use-toast";
 import { toast } from "@/components/ui/sonner";
 import { useNavigate } from "react-router-dom";
@@ -337,10 +338,10 @@ const Marketplace = () => {
         <div className="container mx-auto max-w-7xl">
           <div className="text-center mb-12">
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
-              Talent <span className="gradient-text">Marketplace</span>
+              <span className="gradient-text">SkillSwap</span> Exchange
             </h1>
             <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Connect with talented social media professionals or find exciting opportunities in the industry.
+              Exchange skills with other professionals—trade your expertise for services you need without spending money.
             </p>
             <div className="flex justify-center gap-4 mt-6">
               <Button variant="outline" onClick={goToDashboard}>
@@ -355,16 +356,30 @@ const Marketplace = () => {
           </div>
 
           <Tabs defaultValue="skillswap" className="w-full">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-8">
-              <TabsTrigger value="talent">Find Talent</TabsTrigger>
+            <TabsList className="grid w-full max-w-lg mx-auto grid-cols-4 mb-8">
               <TabsTrigger value="skillswap">SkillSwap</TabsTrigger>
+              <TabsTrigger value="calculator">Calculator</TabsTrigger>
               <TabsTrigger value="messages">Messages</TabsTrigger>
+              <TabsTrigger value="talent">Find Skills</TabsTrigger>
             </TabsList>
+
+            <TabsContent value="skillswap" className="space-y-6">
+              <SkillSwapProfile user={user} />
+              <SkillSwapBoard user={user} />
+            </TabsContent>
+
+            <TabsContent value="calculator">
+              <SwapCalculator />
+            </TabsContent>
+
+            <TabsContent value="messages" className="space-y-4">
+              <SkillSwapMessages user={user} />
+            </TabsContent>
 
             <TabsContent value="talent" className="space-y-4">
               <div className="flex justify-end mb-4">
                 <Button onClick={() => setTalentDialogOpen(true)} className="gradient-bg">
-                  <UserPlus className="mr-2 h-4 w-4" /> Add Talent
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Skills
                 </Button>
               </div>
 
@@ -462,15 +477,6 @@ const Marketplace = () => {
                   </Card>
                 ))}
               </div>
-            </TabsContent>
-
-            <TabsContent value="skillswap" className="space-y-6">
-              <SkillSwapProfile user={user} />
-              <SkillSwapBoard user={user} />
-            </TabsContent>
-
-            <TabsContent value="messages" className="space-y-4">
-              <SkillSwapMessages user={user} />
             </TabsContent>
           </Tabs>
         </div>
