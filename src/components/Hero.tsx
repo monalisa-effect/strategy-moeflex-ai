@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, LayoutDashboard } from "lucide-react";
+import { ArrowRight, LayoutDashboard, ArrowRightLeft } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -10,10 +10,10 @@ const Hero = () => {
       <div className="container mx-auto max-w-5xl">
         <div className="text-center space-y-6 animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            AI-Powered Social Media <span className="gradient-text">Strategy</span> + Skill Exchange
+            AI-Powered Social Media <span className="gradient-text">Strategy</span> + SkillSwap Exchange
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            Moeflex helps social media managers create data-backed content strategies, exchange skills with peers, and stay ahead of trends.
+            Moeflex helps social media managers create data-backed content strategies and exchange skills through our SkillSwap marketplace—trade your expertise for services you need without spending money.
           </p>
           <div className="flex gap-4 justify-center pt-4">
             <Button asChild size="lg" className="gradient-bg text-white">

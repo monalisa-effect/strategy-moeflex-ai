@@ -379,7 +379,7 @@ const Marketplace = () => {
             <TabsContent value="talent" className="space-y-4">
               <div className="flex justify-end mb-4">
                 <Button onClick={() => setTalentDialogOpen(true)} className="gradient-bg">
-                  <UserPlus className="mr-2 h-4 w-4" /> Add Skills
+                  <UserPlus className="mr-2 h-4 w-4" /> Add Swaps
                 </Button>
               </div>
 

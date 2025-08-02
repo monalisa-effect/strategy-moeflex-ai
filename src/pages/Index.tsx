@@ -5,6 +5,10 @@ import Hero from "@/components/Hero";
 import Features from "@/components/Features";
 import SkillSwapShowcase from "@/components/SkillSwapShowcase";
 import SwapCalculator from "@/components/SwapCalculator";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -15,6 +19,116 @@ const Index = () => {
       <Navbar />
       <Hero />
       <Features />
+      
+      {/* SkillSwap Info Section */}
+      <div className="py-20 px-6 bg-gradient-to-br from-slate-50 to-blue-50">
+        <div className="container mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold mb-4">
+              Discover <span className="gradient-text">SkillSwap</span> Exchange
+            </h2>
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+              Trade your skills for services you need. No money, just value exchange between professionals.
+            </p>
+          </div>
+          
+          {/* Demo SkillSwap Options */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+            {[
+              {
+                name: "Sarah Chen",
+                skill: "Instagram Content Creation",
+                seeking: "Web Design",
+                avatar: "/placeholder.svg",
+                rating: 4.9,
+                exchanges: 23
+              },
+              {
+                name: "Marcus Rodriguez",
+                skill: "Video Editing",
+                seeking: "Copywriting",
+                avatar: "/placeholder.svg",
+                rating: 5.0,
+                exchanges: 15
+              },
+              {
+                name: "Emma Thompson",
+                skill: "SEO Strategy",
+                seeking: "Social Media Management",
+                avatar: "/placeholder.svg",
+                rating: 4.8,
+                exchanges: 31
+              },
+              {
+                name: "David Kim",
+                skill: "Graphic Design",
+                seeking: "Content Writing",
+                avatar: "/placeholder.svg",
+                rating: 4.9,
+                exchanges: 18
+              },
+              {
+                name: "Lisa Park",
+                skill: "Email Marketing",
+                seeking: "Photography",
+                avatar: "/placeholder.svg",
+                rating: 5.0,
+                exchanges: 27
+              },
+              {
+                name: "Alex Johnson",
+                skill: "Analytics & Reporting",
+                seeking: "Video Production",
+                avatar: "/placeholder.svg",
+                rating: 4.7,
+                exchanges: 12
+              }
+            ].map((user, index) => (
+              <Card key={index} className="hover:shadow-lg transition-shadow">
+                <CardHeader className="pb-3">
+                  <div className="flex items-center gap-3">
+                    <Avatar>
+                      <AvatarImage src={user.avatar} />
+                      <AvatarFallback>{user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
+                    </Avatar>
+                    <div>
+                      <CardTitle className="text-lg">{user.name}</CardTitle>
+                      <div className="flex items-center gap-1">
+                        <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+                        <span className="text-sm font-medium">{user.rating}</span>
+                        <span className="text-sm text-muted-foreground">({user.exchanges} swaps)</span>
+                      </div>
+                    </div>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-3">
+                    <div>
+                      <Badge variant="secondary" className="bg-green-100 text-green-800">
+                        Offering: {user.skill}
+                      </Badge>
+                    </div>
+                    <div>
+                      <Badge variant="outline" className="border-blue-200 text-blue-800">
+                        Seeking: {user.seeking}
+                      </Badge>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+          
+          <div className="text-center">
+            <Button asChild size="lg" className="gradient-bg">
+              <Link to="/marketplace" className="flex items-center gap-2">
+                Start SkillSwapping <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
+        </div>
+      </div>
+      
       <SkillSwapShowcase />
       <SwapCalculator />
       
