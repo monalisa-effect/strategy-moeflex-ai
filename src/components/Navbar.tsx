@@ -92,12 +92,6 @@ const Navbar = () => {
             Home
           </Link>
           <Link 
-            to="/generator" 
-            className={`${location.pathname === '/generator' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
-          >
-            Strategy Generator
-          </Link>
-          <Link 
             to="/marketplace" 
             className={`${location.pathname === '/marketplace' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
