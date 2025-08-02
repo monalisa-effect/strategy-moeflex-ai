@@ -2,7 +2,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { ArrowRight, LayoutDashboard, ArrowRightLeft } from "lucide-react";
+import { ArrowRight, LayoutDashboard, ArrowLeftRight } from "lucide-react";
 
 const Hero = () => {
   return (
@@ -26,7 +26,7 @@ const Hero = () => {
             </Button>
             <Button asChild variant="outline" size="lg">
               <Link to="/marketplace" className="flex items-center gap-2">
-                SkillSwap <ArrowRightLeft className="h-4 w-4" />
+                SkillSwap <ArrowLeftRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
