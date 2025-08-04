@@ -140,11 +140,13 @@ const Index = () => {
           <p className="text-xl text-muted-foreground mb-8">
             Join thousands of social media managers who are saving time and driving better results with Moeflex.
           </p>
-          <Button asChild size="lg" className="gradient-bg">
-            <Link to="/generator" className="flex items-center gap-2">
-              Generate Your Strategy <ArrowRight className="h-4 w-4" />
-            </Link>
-          </Button>
+          <div className="max-w-full px-4">
+            <Button asChild size="lg" className="gradient-bg w-full sm:w-auto">
+              <Link to="/generator" className="flex items-center justify-center gap-2">
+                Generate Your Strategy <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </div>
       

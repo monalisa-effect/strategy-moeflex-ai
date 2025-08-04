@@ -15,17 +15,17 @@ const Hero = () => {
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
             Moeflex helps social media managers create data-backed content strategies and exchange skills through our SkillSwap marketplace—trade your expertise for services you need without spending money.
           </p>
-          <div className="flex gap-4 justify-center pt-4">
-            <Button asChild size="lg" className="gradient-bg text-white">
-              <Link to="/generator" className="flex items-center gap-2">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 max-w-full">
+            <Button asChild size="lg" className="gradient-bg text-white w-full sm:w-auto">
+              <Link to="/generator" className="flex items-center justify-center gap-2">
                 Generate Strategy <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/trends">Learn More</Link>
+            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+              <Link to="/trends" className="flex items-center justify-center">Learn More</Link>
             </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/marketplace" className="flex items-center gap-2">
+            <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
+              <Link to="/marketplace" className="flex items-center justify-center gap-2">
                 SkillSwap <ArrowLeftRight className="h-4 w-4" />
               </Link>
             </Button>

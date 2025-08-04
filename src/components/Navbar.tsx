@@ -66,7 +66,11 @@ const Navbar = () => {
   };
   
   const handleGetStarted = () => {
-    navigate("/generator");
+    if (user) {
+      navigate("/dashboard");
+    } else {
+      navigate("/auth");
+    }
     setIsSheetOpen(false);
   };
 
@@ -203,14 +207,28 @@ const Navbar = () => {
               </Button>
             </>
           )}
-          <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
+          {user ? (
+            <Button className="gradient-bg" onClick={handleGetStarted}>
+              Dashboard
+            </Button>
+          ) : (
+            <Button className="gradient-bg" onClick={handleGetStarted}>
+              Sign In
+            </Button>
+          )}
         </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center gap-2">
-          <Button className="gradient-bg text-sm px-3 py-2" onClick={handleGetStarted}>
-            Get Started
-          </Button>
+          {user ? (
+            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleGetStarted}>
+              Dashboard
+            </Button>
+          ) : (
+            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleGetStarted}>
+              Sign In
+            </Button>
+          )}
           <Sheet open={isSheetOpen} onOpenChange={setIsSheetOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="h-9 w-9">
