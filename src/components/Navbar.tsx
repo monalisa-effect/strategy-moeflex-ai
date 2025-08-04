@@ -66,6 +66,11 @@ const Navbar = () => {
   };
   
   const handleGetStarted = () => {
+    navigate("/generator");
+    setIsSheetOpen(false);
+  };
+
+  const handleMobileAuth = () => {
     if (user) {
       navigate("/dashboard");
     } else {
@@ -207,25 +212,17 @@ const Navbar = () => {
               </Button>
             </>
           )}
-          {user ? (
-            <Button className="gradient-bg" onClick={handleGetStarted}>
-              Dashboard
-            </Button>
-          ) : (
-            <Button className="gradient-bg" onClick={handleGetStarted}>
-              Sign In
-            </Button>
-          )}
+          <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
         </div>
 
         {/* Mobile Menu */}
         <div className="md:hidden flex items-center gap-2">
           {user ? (
-            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleGetStarted}>
+            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleMobileAuth}>
               Dashboard
             </Button>
           ) : (
-            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleGetStarted}>
+            <Button className="gradient-bg text-sm px-3 py-2" onClick={handleMobileAuth}>
               Sign In
             </Button>
           )}
