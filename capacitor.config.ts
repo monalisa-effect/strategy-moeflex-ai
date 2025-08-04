@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'strategy-moeflex-ai',
   webDir: 'dist',
   server: {
-    url: "https://c65e193c-e8fd-46bc-85f7-e778b8974738.lovableproject.com?forceHideBadge=true",
+     // url: "https://c65e193c-e8fd-46bc-85f7-e778b8974738.lovableproject.com?forceHideBadge=true",
     cleartext: true
   },
   android: {
