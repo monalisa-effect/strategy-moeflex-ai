@@ -282,30 +282,67 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
 
           {/* AI Generated Strategy */}
           {aiGeneratedStrategy && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="gradient-text">AI-Generated Strategy</CardTitle>
-                <CardDescription>Customized recommendations based on your business details</CardDescription>
+            <Card className="overflow-hidden">
+              <CardHeader className="bg-gradient-to-r from-primary/5 to-primary/10 border-b border-primary/20">
+                <div className="flex items-center gap-3">
+                  <div className="bg-primary/10 p-2 rounded-full">
+                    <Lightbulb className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <CardTitle className="gradient-text text-xl">AI-Generated Strategy</CardTitle>
+                    <CardDescription className="text-sm">Customized recommendations based on your business details</CardDescription>
+                  </div>
+                </div>
               </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead className="w-1/4">Strategy Component</TableHead>
-                      <TableHead>Recommendations</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    <TableRow>
-                      <TableCell className="font-semibold align-top">AI Strategy Analysis</TableCell>
-                      <TableCell>
-                        <div className="bg-muted/50 p-4 rounded-lg">
+              <CardContent className="p-0">
+                <div className="bg-gradient-to-br from-background to-muted/30 p-6 space-y-6">
+                  <div className="flex items-start gap-4 p-4 bg-card rounded-lg border border-primary/10 shadow-sm">
+                    <div className="bg-primary/10 p-2 rounded-full shrink-0">
+                      <Target className="h-4 w-4 text-primary" />
+                    </div>
+                    <div className="flex-1 space-y-4">
+                      <div className="border-l-4 border-primary/20 pl-4">
+                        <h4 className="font-semibold text-base mb-3 text-foreground">Strategy Recommendations</h4>
+                        <div className="prose prose-sm max-w-none">
                           {formatAIStrategy(aiGeneratedStrategy)}
                         </div>
-                      </TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Key Action Items */}
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    <div className="bg-card p-4 rounded-lg border border-primary/10 hover:shadow-md transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingUp className="h-4 w-4 text-primary" />
+                        <h5 className="font-medium text-sm">Priority Action</h5>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Focus on the top 2-3 recommendations for immediate implementation
+                      </p>
+                    </div>
+                    
+                    <div className="bg-card p-4 rounded-lg border border-primary/10 hover:shadow-md transition-all duration-300">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Calendar className="h-4 w-4 text-primary" />
+                        <h5 className="font-medium text-sm">Timeline</h5>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Implement changes over 2-4 weeks for optimal results
+                      </p>
+                    </div>
+                    
+                    <div className="bg-card p-4 rounded-lg border border-primary/10 hover:shadow-md transition-all duration-300 md:col-span-2 lg:col-span-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Users className="h-4 w-4 text-primary" />
+                        <h5 className="font-medium text-sm">Success Metrics</h5>
+                      </div>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        Track engagement, reach, and conversion improvements
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </CardContent>
             </Card>
           )}
