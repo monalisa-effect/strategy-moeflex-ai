@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
 import Features from "@/components/Features";
@@ -12,25 +12,46 @@ import { Star, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 const Index = () => {
+  const [user, setUser] = useState(null);
+  const { profile } = useUserProfile(user);
+  const isAdmin = profile?.role === 'admin';
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (event, session) => {
+        setUser(session?.user ?? null);
+      }
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
       <Hero />
       <Features />
       
-      {/* SkillSwap Info Section */}
-      <div className="py-20 px-6 bg-gradient-to-br from-slate-50 to-blue-50">
-        <div className="container mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Discover <span className="gradient-text">SkillSwap</span> Exchange
-            </h2>
-            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-              Trade your skills for services you need. No money, just value exchange between professionals.
-            </p>
-          </div>
+      {/* SkillSwap Info Section - Only for admins */}
+      {isAdmin && (
+        <div className="py-20 px-6 bg-gradient-to-br from-slate-50 to-blue-50">
+          <div className="container mx-auto max-w-6xl">
+            <div className="text-center mb-12">
+              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4">
+                Discover <span className="gradient-text">SkillSwap</span> Exchange
+              </h2>
+              <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
+                Trade your skills for services you need. No money, just value exchange between professionals.
+              </p>
+            </div>
           
           {/* Demo SkillSwap Options */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -119,18 +140,19 @@ const Index = () => {
             ))}
           </div>
           
-          <div className="text-center">
-            <Button asChild size="lg" className="gradient-bg">
-              <Link to="/marketplace" className="flex items-center gap-2">
-                Start SkillSwapping <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+            <div className="text-center">
+              <Button asChild size="lg" className="gradient-bg">
+                <Link to="/marketplace" className="flex items-center gap-2">
+                  Start SkillSwapping <ArrowRight className="h-4 w-4" />
+                </Link>
+              </Button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
       
-      <SkillSwapShowcase />
-      <SwapCalculator />
+      {isAdmin && <SkillSwapShowcase />}
+      {isAdmin && <SwapCalculator />}
       
       <div className="py-20 px-6 bg-white text-center">
         <div className="container mx-auto max-w-4xl">
@@ -169,9 +191,9 @@ const Index = () => {
                 <h3 className="font-semibold mb-4">Product</h3>
                 <ul className="space-y-2">
                   <li><Link to="/generator" className="text-slate-300 hover:text-white">Strategy Generator</Link></li>
-                  <li><Link to="/marketplace" className="text-slate-300 hover:text-white">SkillSwap</Link></li>
+                  {isAdmin && <li><Link to="/marketplace" className="text-slate-300 hover:text-white">SkillSwap</Link></li>}
                   <li><Link to="/trends" className="text-slate-300 hover:text-white">Trend Hub</Link></li>
-                  <li><a href="#" className="text-slate-300 hover:text-white">Swap Calculator</a></li>
+                  {isAdmin && <li><a href="#" className="text-slate-300 hover:text-white">Swap Calculator</a></li>}
                 </ul>
               </div>
               <div>

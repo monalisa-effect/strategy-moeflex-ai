@@ -25,8 +25,8 @@ const Hero = () => {
               <Link to="/trends" className="flex items-center justify-center">Learn More</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full sm:w-auto">
-              <Link to="/marketplace" className="flex items-center justify-center gap-2">
-                SkillSwap <ArrowLeftRight className="h-4 w-4" />
+              <Link to="/trends" className="flex items-center justify-center gap-2">
+                View Trends <ArrowLeftRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>

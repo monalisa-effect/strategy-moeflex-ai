@@ -105,53 +105,55 @@ const Navbar = () => {
           <div className="h-9 w-9 rounded-full gradient-bg flex items-center justify-center shrink-0">
             <Lightbulb className="text-white h-5 w-5" />
           </div>
-          <span className="text-xl md:text-2xl font-bold gradient-text truncate">Moeflex</span>
+          <span className="text-lg md:text-xl lg:text-2xl font-bold gradient-text truncate">Moeflex</span>
         </Link>
         
         {/* Desktop Navigation */}
-        <div className="hidden md:flex gap-6">
+        <div className="hidden md:flex gap-3 lg:gap-6">
           <Link 
             to="/" 
-            className={`${location.pathname === '/' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+            className={`text-sm lg:text-base ${location.pathname === '/' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
             Home
           </Link>
-          <Link 
-            to="/marketplace" 
-            className={`${location.pathname === '/marketplace' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
-          >
-            SkillSwap
-          </Link>
+          {isAdmin && (
+            <Link 
+              to="/marketplace" 
+              className={`text-sm lg:text-base ${location.pathname === '/marketplace' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+            >
+              SkillSwap
+            </Link>
+          )}
           <Link 
             to="/trends" 
-            className={`${location.pathname === '/trends' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+            className={`text-sm lg:text-base ${location.pathname === '/trends' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
             Trends
           </Link>
           <Link 
             to="/about" 
-            className={`${location.pathname === '/about' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+            className={`text-sm lg:text-base ${location.pathname === '/about' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
             About
           </Link>
           <Link 
             to="/help" 
-            className={`${location.pathname === '/help' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+            className={`text-sm lg:text-base ${location.pathname === '/help' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
           >
             Help
           </Link>
         </div>
 
         {/* Desktop Right Side */}
-        <div className="hidden md:flex items-center gap-3">
+        <div className="hidden md:flex items-center gap-2 lg:gap-3">
           {loading || profileLoading ? (
             <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse"></div>
           ) : user ? (
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 lg:gap-3">
               {!isAdmin && (
                 <Link
                   to="/dashboard"
-                  className={`${location.pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+                  className={`text-sm lg:text-base ${location.pathname === '/dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
                 >
                   Dashboard
                 </Link>
@@ -159,7 +161,7 @@ const Navbar = () => {
               {isAdmin && (
                 <Link
                   to="/admin-dashboard"
-                  className={`${location.pathname === '/admin-dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
+                  className={`text-sm lg:text-base ${location.pathname === '/admin-dashboard' ? 'text-foreground' : 'text-muted-foreground'} hover:text-foreground transition-colors`}
                 >
                   Admin
                 </Link>
@@ -175,7 +177,7 @@ const Navbar = () => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="bg-background border z-50">
                   <DropdownMenuLabel className="flex items-center gap-2">
-                    {user.email}
+                    <span className="truncate max-w-[200px]">{user.email}</span>
                     {isAdmin && <Shield className="h-3 w-3 text-red-500" />}
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -202,17 +204,11 @@ const Navbar = () => {
               </DropdownMenu>
             </div>
           ) : (
-            <>
-              <Button variant="outline" onClick={handleSignIn}>
-                Sign In
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/admin-auth')}>
-                <Shield className="mr-2 h-4 w-4" />
-                Admin
-              </Button>
-            </>
+            <Button variant="outline" onClick={handleSignIn} className="text-sm lg:text-base px-3 lg:px-4">
+              Sign In
+            </Button>
           )}
-          <Button className="gradient-bg" onClick={handleGetStarted}>Get Started</Button>
+          <Button className="gradient-bg text-sm lg:text-base px-3 lg:px-4" onClick={handleGetStarted}>Get Started</Button>
         </div>
 
         {/* Mobile Menu */}
@@ -246,35 +242,37 @@ const Navbar = () => {
                 <Link 
                   to="/" 
                   onClick={() => handleNavigation('/')}
-                  className={`block py-3 px-4 rounded-lg ${location.pathname === '/' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
+                  className={`block py-3 px-4 rounded-lg text-sm ${location.pathname === '/' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
                 >
                   Home
                 </Link>
-                <Link 
-                  to="/marketplace" 
-                  onClick={() => handleNavigation('/marketplace')}
-                  className={`block py-3 px-4 rounded-lg ${location.pathname === '/marketplace' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
-                >
-                  SkillSwap
-                </Link>
+                {isAdmin && (
+                  <Link 
+                    to="/marketplace" 
+                    onClick={() => handleNavigation('/marketplace')}
+                    className={`block py-3 px-4 rounded-lg text-sm ${location.pathname === '/marketplace' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
+                  >
+                    SkillSwap
+                  </Link>
+                )}
                 <Link 
                   to="/trends" 
                   onClick={() => handleNavigation('/trends')}
-                  className={`block py-3 px-4 rounded-lg ${location.pathname === '/trends' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
+                  className={`block py-3 px-4 rounded-lg text-sm ${location.pathname === '/trends' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
                 >
                   Trends
                 </Link>
                 <Link 
                   to="/about" 
                   onClick={() => handleNavigation('/about')}
-                  className={`block py-3 px-4 rounded-lg ${location.pathname === '/about' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
+                  className={`block py-3 px-4 rounded-lg text-sm ${location.pathname === '/about' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
                 >
                   About
                 </Link>
                 <Link 
                   to="/help" 
                   onClick={() => handleNavigation('/help')}
-                  className={`block py-3 px-4 rounded-lg ${location.pathname === '/help' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
+                  className={`block py-3 px-4 rounded-lg text-sm ${location.pathname === '/help' ? 'bg-muted text-foreground' : 'text-muted-foreground hover:bg-muted/50'} transition-colors`}
                 >
                   Help
                 </Link>
@@ -308,7 +306,7 @@ const Navbar = () => {
                         <AvatarFallback>{getUserInitials()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm text-foreground truncate">{user.email}</p>
+                        <p className="text-xs text-foreground truncate">{user.email}</p>
                         {isAdmin && <p className="text-xs text-red-500">Admin</p>}
                       </div>
                     </div>
