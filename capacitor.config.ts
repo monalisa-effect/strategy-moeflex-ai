@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'strategy-moeflex-ai',
   webDir: 'dist',
   server: {
-     // url: "https://c65e193c-e8fd-46bc-85f7-e778b8974738.lovableproject.com?forceHideBadge=true",
+    url: 'https://c65e193c-e8fd-46bc-85f7-e778b8974738.lovableproject.com?forceHideBadge=true',
     cleartext: true
   },
   android: {
@@ -15,14 +15,17 @@ const config: CapacitorConfig = {
   },
   plugins: {
     SplashScreen: {
-      launchShowDuration: 2000,
-      backgroundColor: "#ffffff",
+      launchShowDuration: 500,
+      launchAutoHide: true,
+      launchFadeOutDuration: 300,
+      backgroundColor: "#6366f1",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP",
       showSpinner: false,
-      androidSpinnerStyle: "large",
-      iosSpinnerStyle: "small",
-      spinnerColor: "#999999",
       splashFullScreen: true,
-      splashImmersive: true
+      splashImmersive: true,
+      layoutName: "launch_screen",
+      useDialog: false,
     }
   }
 };
