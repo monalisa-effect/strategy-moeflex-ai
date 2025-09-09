@@ -1,13 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Download, Share, Calendar, TrendingUp, Target, Users, Lightbulb } from "lucide-react";
+import { Download, Share, Calendar, TrendingUp, Target, Users, Lightbulb, Hash, Loader2, Copy, Check } from "lucide-react";
 import { toast } from "sonner";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
+import { supabase } from "@/integrations/supabase/client";
 
 interface StrategyResultProps {
   data: any; // In a real app, you'd define a proper type
@@ -15,6 +16,9 @@ interface StrategyResultProps {
 }
 
 const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrategy }) => {
+  const [hashtags, setHashtags] = useState<string[]>([]);
+  const [isGeneratingHashtags, setIsGeneratingHashtags] = useState(false);
+  const [copiedHashtag, setCopiedHashtag] = useState<string | null>(null);
 
   const handleShare = async () => {
     try {
@@ -67,6 +71,52 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
     } catch (error) {
       console.error('PDF generation error:', error);
       toast.error("Failed to generate PDF");
+    }
+  };
+
+  const generateHashtags = async () => {
+    setIsGeneratingHashtags(true);
+    try {
+      const { data: hashtagData, error } = await supabase.functions.invoke('generate-hashtags', {
+        body: {
+          businessName: data.businessName,
+          industry: data.industry,
+          platforms: data.platforms,
+          goals: data.goals,
+          targetAudience: data.audience
+        }
+      });
+
+      if (error) throw error;
+      
+      setHashtags(hashtagData.hashtags || []);
+      toast.success("Hashtags Generated! AI-powered hashtags are ready for your campaigns.");
+    } catch (error) {
+      console.error('Error generating hashtags:', error);
+      toast.error("Failed to generate hashtags. Please try again.");
+    } finally {
+      setIsGeneratingHashtags(false);
+    }
+  };
+
+  const copyHashtag = async (hashtag: string) => {
+    try {
+      await navigator.clipboard.writeText(hashtag);
+      setCopiedHashtag(hashtag);
+      setTimeout(() => setCopiedHashtag(null), 2000);
+      toast.success(`${hashtag} copied to clipboard`);
+    } catch (error) {
+      toast.error("Failed to copy hashtag");
+    }
+  };
+
+  const copyAllHashtags = async () => {
+    try {
+      const allHashtags = hashtags.join(' ');
+      await navigator.clipboard.writeText(allHashtags);
+      toast.success("All hashtags copied to clipboard");
+    } catch (error) {
+      toast.error("Failed to copy hashtags");
     }
   };
 
@@ -346,6 +396,120 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
               </CardContent>
             </Card>
           )}
+
+          {/* AI-Generated Hashtags */}
+          <Card className="overflow-hidden">
+            <CardHeader className="bg-gradient-to-r from-secondary/5 to-secondary/10 border-b border-secondary/20">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="bg-secondary/10 p-2 rounded-full">
+                    <Hash className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">AI-Generated Hashtags</CardTitle>
+                    <CardDescription className="text-sm">Boost your social media reach with targeted hashtags</CardDescription>
+                  </div>
+                </div>
+                <Button 
+                  onClick={generateHashtags} 
+                  disabled={isGeneratingHashtags}
+                  variant="outline"
+                  size="sm"
+                >
+                  {isGeneratingHashtags ? (
+                    <>
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Hash className="h-4 w-4 mr-2" />
+                      Generate Hashtags
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="p-6">
+              {hashtags.length > 0 ? (
+                <div className="space-y-4">
+                  <div className="flex justify-between items-center">
+                    <p className="text-sm text-muted-foreground">
+                      {hashtags.length} hashtags generated for your campaign
+                    </p>
+                    <Button 
+                      onClick={copyAllHashtags}
+                      variant="outline" 
+                      size="sm"
+                    >
+                      <Copy className="h-4 w-4 mr-2" />
+                      Copy All
+                    </Button>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {hashtags.map((hashtag, index) => (
+                      <div 
+                        key={index}
+                        className="group relative"
+                      >
+                        <Badge 
+                          variant="secondary" 
+                          className="cursor-pointer hover:bg-secondary/80 transition-colors pr-8"
+                          onClick={() => copyHashtag(hashtag)}
+                        >
+                          {hashtag}
+                        </Badge>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="absolute right-1 top-1/2 -translate-y-1/2 h-4 w-4 p-0 opacity-0 group-hover:opacity-100 transition-opacity"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            copyHashtag(hashtag);
+                          }}
+                        >
+                          {copiedHashtag === hashtag ? (
+                            <Check className="h-3 w-3 text-green-500" />
+                          ) : (
+                            <Copy className="h-3 w-3" />
+                          )}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="bg-muted/50 p-4 rounded-lg">
+                    <h4 className="font-medium text-sm mb-2">Hashtag Usage Tips:</h4>
+                    <ul className="text-xs text-muted-foreground space-y-1">
+                      <li>• Use 5-10 hashtags per post for optimal engagement</li>
+                      <li>• Mix popular and niche hashtags for better reach</li>
+                      <li>• Research trending hashtags in your industry regularly</li>
+                      <li>• Create branded hashtags for your campaigns</li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Hash className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                  <p className="text-muted-foreground mb-4">
+                    Generate AI-powered hashtags tailored to your business and goals
+                  </p>
+                  <Button onClick={generateHashtags} disabled={isGeneratingHashtags}>
+                    {isGeneratingHashtags ? (
+                      <>
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                        Generating Hashtags...
+                      </>
+                    ) : (
+                      <>
+                        <Hash className="h-4 w-4 mr-2" />
+                        Generate Hashtags
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+            </CardContent>
+          </Card>
 
           {/* Key Insights Grid */}
           <div className="grid gap-4 md:grid-cols-2">
