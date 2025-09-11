@@ -120,39 +120,71 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
     }
   };
 
-  // Format the AI generated strategy for better readability
-  const formatAIStrategy = (strategy: string) => {
-    if (!strategy) return null;
+  // Parse AI strategy into separate sections with their own cards
+  const parseAIStrategyIntoSections = (strategy: string) => {
+    if (!strategy) return [];
+
+    const sectionHeaders = [
+      'Content Strategy Recommendations',
+      'Posting Frequency and Timing',
+      'Engagement Tactics',
+      'Platform-Specific Best Practices',
+      'Measurable Goals and KPIs',
+      'Content Calendar Suggestions', 
+      'Brand Positioning Recommendations',
+      'Low-Budget Considerations'
+    ];
+
+    const sections = [];
+    let currentSection = null;
     
-    // Split by double line breaks to create paragraphs
-    const paragraphs = strategy.split('\n\n').filter(p => p.trim());
+    // Split strategy into lines and process
+    const lines = strategy.split('\n').filter(line => line.trim());
     
-    return paragraphs.map((paragraph, index) => {
-      // Check if it's a heading (starts with #, **, or is in ALL CAPS)
-      const isHeading = paragraph.match(/^#+\s/) || paragraph.match(/^\*\*.*\*\*$/) || 
-                       (paragraph.length < 100 && paragraph === paragraph.toUpperCase() && paragraph.includes(' '));
+    for (const line of lines) {
+      // Check if line is a section header
+      const isHeader = sectionHeaders.some(header => 
+        line.toLowerCase().includes(header.toLowerCase()) ||
+        line.match(/^\*?\*?[\d\.]?\s*(content strategy|posting frequency|engagement tactics|platform-specific|measurable goals|content calendar|brand positioning|low-budget)/i)
+      );
       
-      if (isHeading) {
-        return (
-          <h4 key={index} className="font-semibold text-lg mt-4 mb-2 text-primary">
-            {paragraph.replace(/^#+\s|\*\*/g, '').trim()}
-          </h4>
-        );
+      if (isHeader) {
+        // Save previous section
+        if (currentSection) {
+          sections.push(currentSection);
+        }
+        
+        // Start new section
+        const cleanTitle = line.replace(/^\*?\*?[\d\.]?\s*/, '').replace(/\*+$/, '').replace(':', '').trim();
+        currentSection = {
+          title: cleanTitle,
+          content: []
+        };
+      } else if (currentSection && line.trim()) {
+        // Add content to current section
+        currentSection.content.push(line.trim());
       }
-      
+    }
+    
+    // Add the last section
+    if (currentSection) {
+      sections.push(currentSection);
+    }
+    
+    return sections;
+  };
+
+  // Format content within each section
+  const formatSectionContent = (content: string[]) => {
+    return content.map((paragraph, index) => {
       // Check if it's a list item
       const isListItem = paragraph.match(/^[\d\-\*•]/);
       
       if (isListItem) {
-        const listItems = paragraph.split('\n').filter(item => item.trim());
         return (
-          <ul key={index} className="list-disc pl-5 space-y-1 mb-4">
-            {listItems.map((item, itemIndex) => (
-              <li key={itemIndex} className="text-muted-foreground">
-                {item.replace(/^[\d\-\*•]\s*/, '').trim()}
-              </li>
-            ))}
-          </ul>
+          <li key={index} className="text-muted-foreground mb-2 leading-relaxed">
+            {paragraph.replace(/^[\d\-\*•]\s*/, '').trim()}
+          </li>
         );
       }
       
@@ -345,23 +377,62 @@ const StrategyResult: React.FC<StrategyResultProps> = ({ data, aiGeneratedStrate
                 </div>
               </CardHeader>
               <CardContent className="p-0">
-                <div className="bg-gradient-to-br from-background to-muted/30 p-6 space-y-6">
-                  <div className="flex items-start gap-4 p-4 bg-card rounded-lg border border-primary/10 shadow-sm">
-                    <div className="bg-primary/10 p-2 rounded-full shrink-0">
-                      <Target className="h-4 w-4 text-primary" />
-                    </div>
-                    <div className="flex-1 space-y-4">
-                      <div className="border-l-4 border-primary/20 pl-4">
-                        <h4 className="font-semibold text-base mb-3 text-foreground">Strategy Recommendations</h4>
-                        <div className="prose prose-sm max-w-none">
-                          {formatAIStrategy(aiGeneratedStrategy)}
+                <div className="bg-gradient-to-br from-background to-muted/30 p-6">
+                  {/* Parse strategy into separate cards */}
+                  {(() => {
+                    const sections = parseAIStrategyIntoSections(aiGeneratedStrategy);
+                    
+                    if (sections.length === 0) {
+                      return (
+                        <div className="flex items-start gap-4 p-4 bg-card rounded-lg border border-primary/10 shadow-sm">
+                          <div className="bg-primary/10 p-2 rounded-full shrink-0">
+                            <Target className="h-4 w-4 text-primary" />
+                          </div>
+                          <div className="flex-1">
+                            <div className="border-l-4 border-primary/20 pl-4">
+                              <h4 className="font-semibold text-base mb-3 text-foreground">Strategy Overview</h4>
+                              <p className="text-muted-foreground leading-relaxed">{aiGeneratedStrategy}</p>
+                            </div>
+                          </div>
                         </div>
+                      );
+                    }
+                    
+                    return (
+                      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
+                        {sections.map((section, index) => (
+                          <Card key={index} className="bg-card border border-primary/10 hover:shadow-lg transition-all duration-300">
+                            <CardHeader className="pb-3">
+                              <div className="flex items-start gap-3">
+                                <div className="bg-primary/10 p-2 rounded-full shrink-0">
+                                  <Target className="h-4 w-4 text-primary" />
+                                </div>
+                                <CardTitle className="text-base text-foreground leading-tight">
+                                  {section.title}
+                                </CardTitle>
+                              </div>
+                            </CardHeader>
+                            <CardContent className="pt-0">
+                              <div className="space-y-2">
+                                {section.content.some(line => line.match(/^[\d\-\*•]/)) ? (
+                                  <ul className="list-disc pl-5 space-y-1">
+                                    {formatSectionContent(section.content)}
+                                  </ul>
+                                ) : (
+                                  <div>
+                                    {formatSectionContent(section.content)}
+                                  </div>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        ))}
                       </div>
-                    </div>
-                  </div>
+                    );
+                  })()}
                   
                   {/* Key Action Items */}
-                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-6">
                     <div className="bg-card p-4 rounded-lg border border-primary/10 hover:shadow-md transition-all duration-300">
                       <div className="flex items-center gap-2 mb-2">
                         <TrendingUp className="h-4 w-4 text-primary" />
