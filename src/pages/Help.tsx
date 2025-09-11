@@ -12,7 +12,6 @@ const Help = () => {
   const sections = [
     { id: "getting-started", label: "Getting Started", icon: Lightbulb },
     { id: "strategy-generator", label: "Strategy Generator", icon: Lightbulb },
-    { id: "skillswap", label: "SkillSwap", icon: Users },
     { id: "safety", label: "Safety & Trust", icon: AlertTriangle },
     { id: "contact", label: "Contact Support", icon: Phone },
   ];
@@ -87,10 +86,6 @@ const Help = () => {
                             <p className="text-sm text-muted-foreground">AI-powered marketing strategies tailored to your business</p>
                           </div>
                           <div>
-                            <Badge variant="secondary" className="mb-2">SkillSwap Marketplace</Badge>
-                            <p className="text-sm text-muted-foreground">Exchange services with other professionals</p>
-                          </div>
-                          <div>
                             <Badge variant="secondary" className="mb-2">Trends & Analytics</Badge>
                             <p className="text-sm text-muted-foreground">Market insights and trending strategies</p>
                           </div>
@@ -143,110 +138,6 @@ const Help = () => {
                           <li>Mention your current marketing challenges if any</li>
                           <li>Include budget ranges if you have specific constraints</li>
                         </ul>
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </CardContent>
-              </Card>
-            )}
-
-            {activeSection === "skillswap" && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Users className="h-5 w-5" />
-                    SkillSwap Marketplace Guide
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="how-skillswap-works">
-                      <AccordionTrigger>How SkillSwap works</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-4 text-muted-foreground">
-                          <p><strong>SkillSwap</strong> is a service exchange platform where professionals trade skills instead of money.</p>
-                          <ol className="list-decimal list-inside space-y-2">
-                            <li><strong>Browse listings:</strong> Find services others are offering</li>
-                            <li><strong>Propose a swap:</strong> Offer your skills in exchange</li>
-                            <li><strong>Negotiate terms:</strong> Agree on deliverables and timelines</li>
-                            <li><strong>Complete the swap:</strong> Deliver services as agreed</li>
-                            <li><strong>Rate & review:</strong> Build trust through feedback</li>
-                          </ol>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="creating-listing">
-                      <AccordionTrigger>Creating a swap listing</AccordionTrigger>
-                      <AccordionContent>
-                        <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-                          <li>Click "Create Swap Listing" on the Marketplace page</li>
-                          <li>Fill in your listing details:
-                            <ul className="list-disc list-inside ml-4 mt-1">
-                              <li><strong>Title:</strong> Clear, descriptive title (e.g., "Logo design for website copy")</li>
-                              <li><strong>Description:</strong> Detailed explanation of what you're offering</li>
-                              <li><strong>Skills:</strong> What you're offering vs. what you need</li>
-                              <li><strong>Time estimates:</strong> Hours needed and delivery timeline</li>
-                            </ul>
-                          </li>
-                          <li>Submit your listing and wait for proposals</li>
-                        </ol>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="proposing-swap">
-                      <AccordionTrigger>Proposing a swap</AccordionTrigger>
-                      <AccordionContent>
-                        <ol className="list-decimal list-inside space-y-2 text-muted-foreground">
-                          <li>Find a listing you're interested in</li>
-                          <li>Click "Propose Swap" on the listing</li>
-                          <li>Fill out the proposal form:
-                            <ul className="list-disc list-inside ml-4 mt-1">
-                              <li><strong>Your offering:</strong> What skill/service you'll provide</li>
-                              <li><strong>What you need:</strong> Confirm what you want from them</li>
-                              <li><strong>Time commitment:</strong> Hours you can dedicate</li>
-                              <li><strong>Delivery time:</strong> When you can complete the work</li>
-                              <li><strong>Message:</strong> Personal introduction and proposal details</li>
-                            </ul>
-                          </li>
-                          <li>Submit your proposal and wait for a response</li>
-                        </ol>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="calculator">
-                      <AccordionTrigger className="flex items-center gap-2">
-                        <Calculator className="h-4 w-4" />
-                        Using the Swap Calculator
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-3 text-muted-foreground">
-                          <p>The Swap Calculator helps ensure fair exchanges by estimating service values.</p>
-                          <ol className="list-decimal list-inside space-y-2">
-                            <li>Enter your service details (hours, skill level, industry)</li>
-                            <li>Enter their service details</li>
-                            <li>Review the fairness assessment:
-                              <ul className="list-disc list-inside ml-4 mt-1">
-                                <li><Badge variant="secondary">Balanced</Badge> - Fair exchange</li>
-                                <li><Badge variant="default">Favors You</Badge> - You're getting more value</li>
-                                <li><Badge variant="outline">Favors Them</Badge> - They're getting more value</li>
-                              </ul>
-                            </li>
-                            <li>Use this information to negotiate fair terms</li>
-                          </ol>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="dashboard">
-                      <AccordionTrigger>Managing your swaps</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="space-y-3 text-muted-foreground">
-                          <p>Use the "My Swaps" dashboard to track all your exchanges:</p>
-                          <ul className="list-disc list-inside space-y-2">
-                            <li><Badge variant="secondary">Waiting</Badge> - Pending approval</li>
-                            <li><Badge variant="default">In Progress</Badge> - Work is being done</li>
-                            <li><Badge variant="outline">Completed</Badge> - Successfully finished</li>
-                            <li><Badge variant="destructive">Disputed</Badge> - Issues need resolution</li>
-                          </ul>
-                          <p className="mt-3">Click on any swap to view details, messages, and take actions.</p>
-                        </div>
                       </AccordionContent>
                     </AccordionItem>
                   </Accordion>
