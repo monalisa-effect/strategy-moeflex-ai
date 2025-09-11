@@ -10,10 +10,10 @@ const Hero = () => {
       <div className="container mx-auto max-w-5xl">
         <div className="text-center space-y-6 animate-fade-in">
           <h1 className="text-4xl md:text-6xl font-bold leading-tight">
-            AI-Powered Social Media <span className="gradient-text">Strategy</span> + SkillSwap Exchange
+            AI-Powered Social Media <span className="gradient-text">Strategy</span>
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto">
-            Moeflex helps social media managers create data-backed content strategies and exchange skills through our SkillSwap marketplace—trade your expertise for services you need without spending money.
+            Moeflex helps social media managers create data-backed content strategies with AI-powered insights and recommendations.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4 max-w-full">
             <Button asChild size="lg" className="gradient-bg text-white w-full sm:w-auto">
